@@ -6,4 +6,8 @@
         <item>Client</item>
         <item>Host</item>
     </string-array>
+
+    <string name="title_activity_tile">tileActivity</string>
+    <string name="dummy_button">Tile me.</string>
+    <string name="dummy_content">I'm\na tile</string>
 </resources>

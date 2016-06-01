@@ -1,5 +1,6 @@
 package de.volzo.miscreen;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void saveRole(int pos) {
-        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences("minPrefs",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("role", pos);
         editor.commit();
@@ -48,21 +49,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         this.spRole.setSelection(0);
     }
 
-    @Override
-    public void onClick(View v) {
-        // call next activity
+    private void refreshView() {
+        int role = getRole();
+        this.spRole.setSelection(role);
     }
 
-    private void refreshView() {
-        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
-
-        int role = sharedPref.getInt("role", 0);
-        this.spRole.setSelection(role);
+    private int getRole() {
+        SharedPreferences sharedPref = getSharedPreferences("minPrefs", MODE_PRIVATE);
+        return sharedPref.getInt("role", 0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         refreshView();
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        int role = getRole();
+        Intent intent = new Intent(this, tileActivity.class);
+        intent.putExtra("role", role);
+        startActivity(intent);
     }
 }
