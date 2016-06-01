@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MIScreen</string>
+
+
+    <string-array name="roleNames">
+        <item>Client</item>
+        <item>Host</item>
+    </string-array>
 </resources>
