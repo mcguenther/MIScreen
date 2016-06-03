@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btOk.setOnClickListener(this);
 
         Discovery discovery = new Discovery(this);
+
+        discovery.initializeDiscoveryListener();
         discovery.advertiseService();
     }
 

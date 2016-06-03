@@ -15,9 +15,13 @@ public class Discovery {
 
     private static final String TAG = Discovery.class.getName();
 
+    private static final String SERVICE_TYPE = "_http._tcp.";
+
     NsdManager nsdManager;
     NsdManager.RegistrationListener registrationListener;
     String serviceName;
+
+    NsdManager.DiscoveryListener discoveryListener;
 
     ServerSocket serverSocket;
 
@@ -28,9 +32,61 @@ public class Discovery {
 
     // Discovering Service
 
+    public void initializeDiscoveryListener() {
 
+        // Instantiate a new DiscoveryListener
+        discoveryListener = new NsdManager.DiscoveryListener() {
 
+            //  Called as soon as service discovery begins.
+            @Override
+            public void onDiscoveryStarted(String regType) {
+                Log.d(TAG, "Service discovery started");
+            }
 
+            @Override
+            public void onServiceFound(NsdServiceInfo service) {
+                // A service was found!  Do something with it.
+                Log.d(TAG, "Service discovery success" + service);
+                if (!service.getServiceType().equals(SERVICE_TYPE)) {
+                    // Service type is the string containing the protocol and
+                    // transport layer for this service.
+                    Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
+                } else if (service.getServiceName().equals(serviceName)) {
+                    // The name of the service tells the user what they'd be
+                    // connecting to. It could be "Bob's Chat App".
+                    Log.d(TAG, "Same machine: " + serviceName);
+                } else if (service.getServiceName().contains("NsdChat")){
+                    //nsdManager.resolveService(service, resolveListener);
+                }
+            }
+
+            @Override
+            public void onServiceLost(NsdServiceInfo service) {
+                // When the network service is no longer available.
+                // Internal bookkeeping code goes here.
+                Log.e(TAG, "service lost" + service);
+            }
+
+            @Override
+            public void onDiscoveryStopped(String serviceType) {
+                Log.i(TAG, "Discovery stopped: " + serviceType);
+            }
+
+            @Override
+            public void onStartDiscoveryFailed(String serviceType, int errorCode) {
+                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                nsdManager.stopServiceDiscovery(this);
+            }
+
+            @Override
+            public void onStopDiscoveryFailed(String serviceType, int errorCode) {
+                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                nsdManager.stopServiceDiscovery(this);
+            }
+        };
+
+        nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
+    }
 
     // Registering / Advertising Service
 
@@ -89,7 +145,7 @@ public class Discovery {
         // The name is subject to change based on conflicts
         // with other services advertised on the same network.
         serviceInfo.setServiceName("MIScreen");
-        serviceInfo.setServiceType("_http._tcp.");
+        serviceInfo.setServiceType(SERVICE_TYPE);
         serviceInfo.setPort(port);
 
         nsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, registrationListener);
