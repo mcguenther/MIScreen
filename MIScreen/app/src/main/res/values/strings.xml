@@ -9,5 +9,5 @@
 
     <string name="title_activity_tile">tileActivity</string>
     <string name="dummy_button">Tile me.</string>
-    <string name="dummy_content">I'm\na tile</string>
+    <string name="dummy_content">I am a tile</string>
 </resources>

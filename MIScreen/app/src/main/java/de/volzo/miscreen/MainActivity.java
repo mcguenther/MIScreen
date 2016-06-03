@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         spRole.setOnItemSelectedListener(this);
         btOk.setOnClickListener(this);
+
+        Discovery discovery = new Discovery(this);
+        discovery.advertiseService();
     }
 
 
