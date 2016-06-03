@@ -13,6 +13,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner spRole;
     private Button btOk;
 
+    // APP LIFECYCLE METHODS
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,11 +26,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btOk.setOnClickListener(this);
 
         Discovery discovery = new Discovery(this);
-
         discovery.initializeDiscoveryListener();
         discovery.advertiseService();
     }
 
+    @Override
+    protected void onPause() {
+        // TODO: kill NSD
+        super.onPause();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshView();
+        // TODO: reinit NSD
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        // TODO: kill NSD
+        super.onDestroy();
+    }
+
+
+    // USER INTERFACE
 
     // as taken from https://developer.android.com/guide/topics/ui/controls/spinner.html
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -63,13 +87,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         SharedPreferences sharedPref = getSharedPreferences("minPrefs", MODE_PRIVATE);
         return sharedPref.getInt("role", 0);
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refreshView();
-    }
-
 
     @Override
     public void onClick(View v) {

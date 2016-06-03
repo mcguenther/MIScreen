@@ -30,6 +30,12 @@ public class Discovery {
         nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
+    public void kill() {
+        // call in case app is put in background or destroyed
+        nsdManager.unregisterService(registrationListener);
+        nsdManager.stopServiceDiscovery(discoveryListener);
+    }
+
     // Discovering Service
 
     public void initializeDiscoveryListener() {
