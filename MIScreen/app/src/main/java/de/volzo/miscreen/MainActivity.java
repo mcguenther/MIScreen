@@ -3,20 +3,24 @@ package de.volzo.miscreen;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+import org.artoolkit.ar.base.ARActivity;
+import org.artoolkit.ar.base.rendering.ARRenderer;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+public class MainActivity extends ARActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
     private Spinner spRole;
     private Button btOk;
 
     // APP LIFECYCLE METHODS
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         spRole = (Spinner) findViewById(R.id.spRole);
@@ -36,14 +40,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onPause();
     }
 
-
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         refreshView();
         // TODO: reinit NSD
     }
-
 
     @Override
     protected void onDestroy() {
@@ -51,6 +53,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onDestroy();
     }
 
+    // ARToolkit
+
+    @Override
+    protected ARRenderer supplyRenderer() {
+        return null;
+    }
+
+    @Override
+    protected FrameLayout supplyFrameLayout() {
+        return null;
+    }
 
     // USER INTERFACE
 
