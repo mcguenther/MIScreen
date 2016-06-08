@@ -62,7 +62,7 @@ public class MainActivity extends ARActivity implements AdapterView.OnItemSelect
 
     @Override
     protected FrameLayout supplyFrameLayout() {
-        return null;
+        return (FrameLayout)this.findViewById(R.id.mainLayout);
     }
 
     // USER INTERFACE
