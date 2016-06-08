@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,35 +8,35 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:id="@+id/mainLayout"
     tools:context="de.volzo.miscreen.MainActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start as"
-        android:id="@+id/textView" />
+        android:text="Start as" />
 
     <Spinner
+        android:id="@+id/spRole"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spRole"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:entries="@array/roleNames"
         android:spinnerMode="dropdown"
-        android:textAlignment="viewEnd"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:textAlignment="viewEnd" />
 
     <Button
+        android:id="@+id/btOk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ok"
-        android:id="@+id/btOk"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/spRole"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:enabled="true"
-        android:layout_alignParentEnd="true" />
-</FrameLayout>
+        android:text="ok" />
+</RelativeLayout>
+
