@@ -16,14 +16,14 @@ public class Discovery {
     private static final String TAG = Discovery.class.getName();
 
     private static final String SERVICE_TYPE = "_http._tcp.";
+    private NsdManager.RegistrationListener registrationListener;
+    private NsdManager nsdManager;
+    private String serviceName;
 
-    NsdManager nsdManager;
-    NsdManager.RegistrationListener registrationListener;
-    String serviceName;
+    private NsdManager.DiscoveryListener discoveryListener;
+    private ServerSocket serverSocket;
 
-    NsdManager.DiscoveryListener discoveryListener;
 
-    ServerSocket serverSocket;
 
 
     public Discovery(Context context) {
@@ -32,6 +32,7 @@ public class Discovery {
 
     public void kill() {
         // call in case app is put in background or destroyed
+        //connection.tearDown();
         nsdManager.unregisterService(registrationListener);
         nsdManager.stopServiceDiscovery(discoveryListener);
     }
@@ -97,6 +98,10 @@ public class Discovery {
     // Registering / Advertising Service
 
     public void advertiseService() {
+        if (serviceName != null) {
+            Log.i(TAG, "service already registered");
+        }
+
         initializeServerSocket();
         initializeRegistrationListener();
         if (serverSocket != null) {
@@ -122,7 +127,7 @@ public class Discovery {
                 // resolve a conflict, so update the name you initially requested
                 // with the name Android actually used.
                 serviceName = NsdServiceInfo.getServiceName();
-                Log.i(TAG, "NSD Registered");
+                Log.i(TAG, "NSD Registered: " + serviceName);
             }
 
             @Override
@@ -150,7 +155,7 @@ public class Discovery {
 
         // The name is subject to change based on conflicts
         // with other services advertised on the same network.
-        serviceInfo.setServiceName("MIScreen");
+        serviceInfo.setServiceName("MIScreenFoo");
         serviceInfo.setServiceType(SERVICE_TYPE);
         serviceInfo.setPort(port);
 
