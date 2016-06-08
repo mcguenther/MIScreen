@@ -2,23 +2,23 @@ package de.volzo.miscreen;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+
 import org.artoolkit.ar.base.ARActivity;
 import org.artoolkit.ar.base.rendering.ARRenderer;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 
-public class MainActivity extends ARActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
     private Spinner spRole;
     private Button btOk;
 
     // APP LIFECYCLE METHODS
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,18 +51,6 @@ public class MainActivity extends ARActivity implements AdapterView.OnItemSelect
     protected void onDestroy() {
         // TODO: kill NSD
         super.onDestroy();
-    }
-
-    // ARToolkit
-
-    @Override
-    protected ARRenderer supplyRenderer() {
-        return null;
-    }
-
-    @Override
-    protected FrameLayout supplyFrameLayout() {
-        return (FrameLayout)this.findViewById(R.id.mainLayout);
     }
 
     // USER INTERFACE
@@ -104,7 +92,7 @@ public class MainActivity extends ARActivity implements AdapterView.OnItemSelect
     @Override
     public void onClick(View v) {
         int role = getRole();
-        Intent intent = new Intent(this, tileActivity.class);
+        Intent intent = new Intent(this, TileActivity.class);
         intent.putExtra("role", role);
         startActivity(intent);
     }

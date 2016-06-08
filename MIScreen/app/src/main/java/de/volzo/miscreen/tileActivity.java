@@ -7,12 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.Spinner;
+
+import org.artoolkit.ar.base.ARActivity;
+import org.artoolkit.ar.base.rendering.ARRenderer;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class tileActivity extends AppCompatActivity {
+public class TileActivity extends ARActivity {
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -54,10 +60,12 @@ public class tileActivity extends AppCompatActivity {
         @Override
         public void run() {
             // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
+
+            //TODO check how to diesplay UI without being able to call getSupportActionBar()
+            /*ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
-            }
+            }*/
             mControlsView.setVisibility(View.VISIBLE);
         }
     };
@@ -83,11 +91,16 @@ public class tileActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tile);
+
+        Discovery discovery = new Discovery(this);
+        discovery.initializeDiscoveryListener();
+        discovery.advertiseService();
+
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -128,10 +141,12 @@ public class tileActivity extends AppCompatActivity {
 
     private void hide() {
         // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
+
+        //TODO check how to hide UI without being able to call getSupportActionBar()
+       /* ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
-        }
+        }*/
         mControlsView.setVisibility(View.GONE);
         mVisible = false;
 
@@ -159,5 +174,36 @@ public class tileActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+
+    @Override
+    protected void onPause() {
+        // TODO: kill NSD
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // TODO: reinit NSD
+    }
+
+    @Override
+    protected void onDestroy() {
+        // TODO: kill NSD
+        super.onDestroy();
+    }
+
+    // ARToolkit
+
+    @Override
+    protected ARRenderer supplyRenderer() {
+        return null;
+    }
+
+    @Override
+    protected FrameLayout supplyFrameLayout() {
+        return (FrameLayout)this.findViewById(R.id.frameLayout);
     }
 }
