@@ -27,6 +27,7 @@ public class Communication {
 
     private List peers = new ArrayList();
     private WifiP2pManager.PeerListListener peerListListener;
+    private BroadcastReceiver broadcastReceiver;
 
     public Communication(Context context) {
         this.context = context;
@@ -37,11 +38,9 @@ public class Communication {
         peerListListener = new WifiP2pManager.PeerListListener() {
             @Override
             public void onPeersAvailable(WifiP2pDeviceList peerList) {
-
                 // Out with the old, in with the new.
                 peers.clear();
                 peers.addAll(peerList.getDeviceList());
-
                 Log.i(TAG, "peers found (" + peers.size() + " devices)");
             }
         };
@@ -49,17 +48,12 @@ public class Communication {
         // BROADCAST RECEIVER
 
         IntentFilter intentFilter = new IntentFilter();
-
-        //  Indicates a change in the Wi-Fi P2P status.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        // Indicates a change in the list of available peers.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        // Indicates the state of Wi-Fi P2P connectivity has changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        // Indicates this device's details have changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
@@ -76,10 +70,10 @@ public class Communication {
 
                     // The peer list has changed!  We should probably do something about
                     // that.
-
                     // Request available peers from the wifi p2p manager. This is an
                     // asynchronous call and the calling activity is notified with a
                     // callback on PeerListListener.onPeersAvailable()
+
                     if (p2pManager != null) {
                         p2pManager.requestPeers(channel, peerListListener);
                     }
@@ -125,5 +119,10 @@ public class Communication {
         });
     }
 
-    // TODO: add lifecycle methods (resume, pause, kill)
+    public void kill() {
+        context.unregisterReceiver(broadcastReceiver);
+
+        // TODO probably a lot more stuff needs to be teared down/closed/unregistered
+    }
+
 }
