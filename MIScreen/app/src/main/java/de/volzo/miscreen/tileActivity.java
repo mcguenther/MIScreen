@@ -1,6 +1,10 @@
 package de.volzo.miscreen;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +23,8 @@ import org.artoolkit.ar.base.rendering.ARRenderer;
  * status bar and navigation/system bar) with user interaction.
  */
 public class TileActivity extends ARActivity {
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 55;
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -101,11 +107,9 @@ public class TileActivity extends ARActivity {
         discovery.initializeDiscoveryListener();
         discovery.advertiseService();
 
-
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
-
+        mContentView = findViewById(R.id.frameLayout);
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +123,18 @@ public class TileActivity extends ARActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+
+        // check for camera permissions!!
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+        }
     }
 
     @Override
@@ -199,7 +215,8 @@ public class TileActivity extends ARActivity {
 
     @Override
     protected ARRenderer supplyRenderer() {
-        return null;
+       return new SimpleRenderer();
+        /* return null;*/
     }
 
     @Override
