@@ -10,4 +10,5 @@
     <string name="title_activity_tile">tileActivity</string>
     <string name="dummy_button">Tile me.</string>
     <string name="dummy_content">I am a tile</string>
+    <string name="title_activity_positioner">Positioner</string>
 </resources>
