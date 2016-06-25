@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onClick(View v) {
         int role = getRole();
-        Intent intent = new Intent(this, TileActivity.class);
+        Intent intent = new Intent(this, Positioner.class);
         intent.putExtra("role", role);
         startActivity(intent);
     }

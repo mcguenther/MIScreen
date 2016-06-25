@@ -67,7 +67,7 @@ public class TileActivity extends ARActivity {
         public void run() {
             // Delayed display of UI elements
 
-            //TODO check how to diesplay UI without being able to call getSupportActionBar()
+            //TODO check how to display UI without being able to call getSupportActionBar()
             /*ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
