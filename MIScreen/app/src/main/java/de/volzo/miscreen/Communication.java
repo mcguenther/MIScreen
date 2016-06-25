@@ -48,7 +48,7 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
                 // Out with the old, in with the new.
                 peers.clear();
                 peers.addAll(peerList.getDeviceList());
-                Log.i(TAG, "peers found (" + peers.size() + " devices)");
+                //Log.i(TAG, "peers found (" + peers.size() + " devices)");
                 connect();
             }
         };
@@ -151,6 +151,7 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
 
         if (peers.size() < 1) {
             Log.e(TAG, "peer list empty, cannot connect");
+            return;
         }
 
         WifiP2pDevice device = (WifiP2pDevice) peers.get(0);
@@ -185,12 +186,12 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a server thread and accepting
             // incoming connections.
-            Log.wtf(TAG, "groupFormed (this device is owner");
+            Log.wtf(TAG, "groupFormed (this device is owner)");
         } else if (info.groupFormed) {
             // The other device acts as the client. In this case,
             // you'll want to create a client thread that connects to the group
             // owner.
-            Log.wtf(TAG, "groupFormed (this device is client");
+            Log.wtf(TAG, "groupFormed (this device is client)");
         }
     }
 
