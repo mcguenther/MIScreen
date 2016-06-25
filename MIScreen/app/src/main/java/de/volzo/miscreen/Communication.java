@@ -1,22 +1,27 @@
 package de.volzo.miscreen;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.NetworkInfo;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Parts of code taken from https://developer.android.com/training/connect-devices-wirelessly/wifi-direct.html
  */
-public class Communication {
+public class Communication implements WifiP2pManager.ConnectionInfoListener {
 
     private static final String TAG = Communication.class.getName();
 
@@ -28,6 +33,8 @@ public class Communication {
     private List peers = new ArrayList();
     private WifiP2pManager.PeerListListener peerListListener;
     private BroadcastReceiver broadcastReceiver;
+
+    WifiP2pManager.ConnectionInfoListener connectionInfoListener = this;
 
     public Communication(Context context) {
         this.context = context;
@@ -42,6 +49,7 @@ public class Communication {
                 peers.clear();
                 peers.addAll(peerList.getDeviceList());
                 Log.i(TAG, "peers found (" + peers.size() + " devices)");
+                connect();
             }
         };
 
@@ -83,6 +91,22 @@ public class Communication {
                     // Connection state changed!  We should probably do something about
                     // that.
 
+                    if (p2pManager == null) {
+                        return;
+                    }
+
+                    NetworkInfo networkInfo = (NetworkInfo) intent
+                            .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+
+                    if (networkInfo.isConnected()) {
+
+                        // We are connected with the other device, request connection
+                        // info to find group owner IP
+
+                        p2pManager.requestConnectionInfo(channel, connectionInfoListener);
+                    }
+
+
                 } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
                     Log.i(TAG, ((WifiP2pDevice) intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)).toString());
                 }
@@ -117,6 +141,54 @@ public class Communication {
                 Log.i(TAG, "peer discovery failed");
             }
         });
+    }
+
+    public void connect() {
+        // Picking the first device found on the network.
+
+        if (peers.size() < 1) {
+            Log.e(TAG, "peer list empty, cannot connect");
+        }
+
+        WifiP2pDevice device = (WifiP2pDevice) peers.get(0);
+
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = device.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+
+        p2pManager.connect(channel, config, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                Toast.makeText(context, "Connect failed. Retry.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+
+        // InetAddress from WifiP2pInfo struct.
+        String groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
+
+        // After the group negotiation, we can determine the group owner.
+        if (info.groupFormed && info.isGroupOwner) {
+            // Do whatever tasks are specific to the group owner.
+            // One common case is creating a server thread and accepting
+            // incoming connections.
+            Log.wtf(TAG, "groupFormed (this device is owner");
+        } else if (info.groupFormed) {
+            // The other device acts as the client. In this case,
+            // you'll want to create a client thread that connects to the group
+            // owner.
+            Log.wtf(TAG, "groupFormed (this device is client");
+        }
     }
 
     public void kill() {
