@@ -66,14 +66,17 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
+
                     // Determine if Wifi P2P mode is enabled or not, alert
                     // the Activity.
+
                     int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
                     if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                         Log.d(TAG, "p2p is enabled");
                     } else {
                         Log.e(TAG, "p2p is NOT enabled");
                     }
+
                 } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
 
                     // The peer list has changed!  We should probably do something about
@@ -122,7 +125,7 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
 
     }
 
-    public void discover() {
+    public void discoverPeers() {
         p2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
 
             @Override

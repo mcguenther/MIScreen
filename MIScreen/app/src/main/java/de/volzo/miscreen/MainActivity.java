@@ -29,13 +29,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spRole.setOnItemSelectedListener(this);
         btOk.setOnClickListener(this);
 
-        //Discovery discovery = new Discovery(this);
+        //NetworkServiceDiscovery discovery = new NetworkServiceDiscovery(this);
         //discovery.initializeDiscoveryListener();
         //discovery.advertiseService();
 
         Communication comm = new Communication(this);
         comm.initialize();
-        comm.discover();
+        comm.discoverPeers();
     }
 
     @Override

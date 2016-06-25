@@ -5,15 +5,11 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Spinner;
 
 import org.artoolkit.ar.base.ARActivity;
 import org.artoolkit.ar.base.rendering.ARRenderer;
@@ -103,9 +99,9 @@ public class TileActivity extends ARActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tile);
 
-        Discovery discovery = new Discovery(this);
-        discovery.initializeDiscoveryListener();
-        discovery.advertiseService();
+//        NetworkServiceDiscovery networkServiceDiscovery = new NetworkServiceDiscovery(this);
+//        networkServiceDiscovery.initializeDiscoveryListener();
+//        networkServiceDiscovery.advertiseService();
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);

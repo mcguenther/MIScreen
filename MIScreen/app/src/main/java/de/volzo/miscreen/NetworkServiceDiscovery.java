@@ -11,9 +11,9 @@ import java.net.ServerSocket;
 /**
  * Parts of code taken from https://developer.android.com/training/connect-devices-wirelessly/nsd.html
  */
-public class Discovery {
+public class NetworkServiceDiscovery {
 
-    private static final String TAG = Discovery.class.getName();
+    private static final String TAG = NetworkServiceDiscovery.class.getName();
 
     private static final String SERVICE_TYPE = "_http._tcp.";
     private NsdManager.RegistrationListener registrationListener;
@@ -23,10 +23,7 @@ public class Discovery {
     private NsdManager.DiscoveryListener discoveryListener;
     private ServerSocket serverSocket;
 
-
-
-
-    public Discovery(Context context) {
+    public NetworkServiceDiscovery(Context context) {
         nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
@@ -76,18 +73,18 @@ public class Discovery {
 
             @Override
             public void onDiscoveryStopped(String serviceType) {
-                Log.i(TAG, "Discovery stopped: " + serviceType);
+                Log.i(TAG, "NetworkServiceDiscovery stopped: " + serviceType);
             }
 
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                Log.e(TAG, "NetworkServiceDiscovery failed: Error code:" + errorCode);
                 nsdManager.stopServiceDiscovery(this);
             }
 
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                Log.e(TAG, "NetworkServiceDiscovery failed: Error code:" + errorCode);
                 nsdManager.stopServiceDiscovery(this);
             }
         };
