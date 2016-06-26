@@ -126,10 +126,10 @@ public class TileActivity extends ARActivity {
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
 
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CAMERA},
-                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         }
     }
 
@@ -211,12 +211,12 @@ public class TileActivity extends ARActivity {
 
     @Override
     protected ARRenderer supplyRenderer() {
-       return new SimpleRenderer();
-        /* return null;*/
+        // return new SimpleRenderer(this);
+        return null;
     }
 
     @Override
     protected FrameLayout supplyFrameLayout() {
-        return (FrameLayout)this.findViewById(R.id.frameLayout);
+        return (FrameLayout) this.findViewById(R.id.frameLayout);
     }
 }
