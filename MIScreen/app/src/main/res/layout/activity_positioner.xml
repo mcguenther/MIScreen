@@ -2,24 +2,25 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:paddingTop="@dimen/activity_vertical_margin">
 
     <FrameLayout xmlns:tools="http://schemas.android.com/tools"
 
         android:id="@+id/frameLayoutPositioner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/tvStatus"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="de.volzo.miscreen.Positioner"
-        android:layout_above="@+id/tvStatus">
+        tools:context="de.volzo.miscreen.Positioner">
+
 
     </FrameLayout>
 
@@ -31,6 +32,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:text="New Text" />
+        android:text="New Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 </RelativeLayout>
 

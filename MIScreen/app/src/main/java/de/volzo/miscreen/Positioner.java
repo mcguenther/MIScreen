@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -20,11 +21,13 @@ import org.artoolkit.ar.base.ARToolKit;
 import org.artoolkit.ar.base.rendering.ARRenderer;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Positioner extends ARActivity {
 
+    public static int MARKER_SIZE = 80;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 55;
     private int markerID = -1;
     private SimpleRenderer arRenderer;
@@ -53,9 +56,10 @@ public class Positioner extends ARActivity {
                     new String[]{Manifest.permission.CAMERA},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         }
-
-
         spRole = (TextView) findViewById(R.id.tvStatus);
+
+        Log.d(TAG, "Setting Camera preferences:");
+
 
     }
 
@@ -63,12 +67,13 @@ public class Positioner extends ARActivity {
     // ARToolkit
     @Override
     protected ARRenderer supplyRenderer() {
-        this.arRenderer = new SimpleRenderer(mHandler);
+        this.arRenderer = new SimpleRenderer(mHandler, MARKER_SIZE);
         return arRenderer;
     }
 
     @Override
     protected FrameLayout supplyFrameLayout() {
+        //this.findViewById(R.id.frameLayoutPositioner).setVisibility(View.INVISIBLE);
         return (FrameLayout) this.findViewById(R.id.frameLayoutPositioner);
     }
 
@@ -79,17 +84,17 @@ public class Positioner extends ARActivity {
                 float[] t = ARToolKit.getInstance().queryMarkerTransformation(markerID);
 
                 if (t != null) {
-                    if (counter > 10) {
-                        float offsetX = t[13];
-                        float offsetY = t[14];
-                        float offsetZ = t[15];
+                    if (counter > 0) {
+                        float offsetX = t[12];
+                        float offsetY = t[13];
+                        float offsetZ = t[14];
 
-                        double dist = Math.sqrt(offsetX*offsetX + offsetY*offsetY + offsetZ*offsetZ)/80;
+                        double dist = Math.sqrt(offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ);
+                        String text = "Distance: " + Double.toString(dist);
 
-                        String text = Double.toString(dist);
-
-                        //spRole.setText(text);
-                        Log.d(TAG, text);
+                        spRole.setText(text);
+                        Log.d(TAG, Arrays.toString(t));
+                        Log.d(TAG, text + "(X:" + offsetX + " Y:" + offsetY + " Z:" + offsetZ + ")");
                         counter = 0;
                     } else {
                         counter++;
