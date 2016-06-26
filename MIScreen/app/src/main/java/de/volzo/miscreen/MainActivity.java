@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 
+import android.hardware.Camera;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         spRole.setOnItemSelectedListener(this);
         btOk.setOnClickListener(this);
+        setCameraPreferences();
 
         registerUpdateReceiver();
 
@@ -73,6 +76,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 advertise();
             }
         }, 10000);
+    }
+
+    private void setCameraPreferences() {
+        // .getString("pref_cameraIndex","0")
+        SharedPreferences defaultSP = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = defaultSP.edit();
+
+        int index = 0;
+        int cameraCount = 0;
+        Camera cam = null;
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        cameraCount = Camera.getNumberOfCameras();
+        for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
+            Camera.getCameraInfo(camIdx, cameraInfo);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                index = camIdx;
+            }
+        }
+
+        editor.putString("pref_cameraIndex", Integer.toString(index));
+        editor.putString("pref_cameraResolution", "800x600");
+
+        editor.commit();
     }
 
     @Override
@@ -119,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void saveRole(int pos) {
-        SharedPreferences sharedPref = getSharedPreferences("minPrefs",MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences("minPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("role", pos);
         editor.commit();

@@ -17,12 +17,14 @@ public class SimpleRenderer extends org.artoolkit.ar.base.rendering.ARRenderer {
     private int markerID = -1;
     private Cube cube = new Cube(80.0f, 0.0f, 0.0f, 40.0f);
     private Handler mHandler;
+    private int markerSize;
 
     private SimpleRenderer() {
     }
 
-    public SimpleRenderer(Handler mHandler) {
+    public SimpleRenderer(Handler mHandler, int markerSize) {
         this.mHandler = mHandler;
+        this.markerSize = markerSize;
     }
 
     /**
@@ -30,7 +32,7 @@ public class SimpleRenderer extends org.artoolkit.ar.base.rendering.ARRenderer {
      */
     @Override
     public boolean configureARScene() {
-        markerID = ARToolKit.getInstance().addMarker("single;Data/hiro.patt;80");
+        markerID = ARToolKit.getInstance().addMarker("single;Data/hiro.patt;" + Integer.toString(markerSize));
         if (markerID < 0) {
             return false;
         }
@@ -46,6 +48,7 @@ public class SimpleRenderer extends org.artoolkit.ar.base.rendering.ARRenderer {
         // Apply the ARToolKit projection matrix
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadMatrixf(ARToolKit.getInstance().getProjectionMatrix(), 0);
+
         // If the marker is visible, apply its transformation, and draw a cube
         if (ARToolKit.getInstance().queryMarkerVisible(markerID)) {
             gl.glMatrixMode(GL10.GL_MODELVIEW);
