@@ -55,7 +55,7 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
 
         broadcastReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void onReceive(final Context context, Intent intent) {
                 String action = intent.getAction();
                 if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
 
@@ -85,9 +85,10 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
                                         Log.d(TAG, "device already connected to");
                                         continue;
                                     }
-                                    //connect(device);
+                                    //connect(device); // TODO
                                     connectedPeerList.add(device);
                                 }
+                                context.sendBroadcast(new Intent("MISCREEN_PEER_UPDATE"));
                             }
                         });
                     }
@@ -185,19 +186,17 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
             // One common case is creating a server thread and accepting
             // incoming connections.
             Log.wtf(TAG, "groupFormed (this device is owner)");
-            startRegistration();
         } else if (info.groupFormed) {
             // The other device acts as the client. In this case,
             // you'll want to create a client thread that connects to the group
             // owner.
             Log.wtf(TAG, "groupFormed (this device is client)");
-            discoverService();
         }
     }
 
     // SERVICE DISCOVERY
 
-    private void startRegistration() {
+    public void startRegistration() {
         //  Create a string map containing information about your service.
         Map record = new HashMap();
         record.put("listenport", String.valueOf(8282));
@@ -228,7 +227,7 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
         });
     }
 
-    private void discoverService() {
+    public void discoverService() {
         WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
             /* Callback includes:

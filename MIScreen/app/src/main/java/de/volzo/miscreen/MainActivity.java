@@ -11,6 +11,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+
+    private static final String TAG = MainActivity.class.getName();
+
     private Spinner spRole;
     private Button btOk;
+
+    private boolean host = false;
 
     private Communication comm;
     private ArrayAdapter<WifiP2pDevice> adapter;
@@ -58,6 +64,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void run() {
                 comm.discoverPeers();
             }
+        }, 5000);
+
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                advertise();
+            }
         }, 10000);
     }
 
@@ -78,6 +92,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         // TODO: kill NSD
         super.onDestroy();
+        comm.kill();
+    }
+
+    // MISC
+
+    private void advertise() {
+        if (host) {
+            Log.d(TAG, "register Service");
+            comm.startRegistration();
+        } else {
+            Log.d(TAG, "discover Service");
+            comm.discoverService();
+        }
     }
 
     // USER INTERFACE
@@ -88,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
         saveRole(pos);
+        advertise();
     }
 
     private void saveRole(int pos) {
@@ -95,6 +123,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("role", pos);
         editor.commit();
+        if (pos == 0) {
+            host = false;
+        } else if (pos == 1) {
+            host = true;
+        } else {
+            Log.wtf(TAG, "unimplemented role");
+        }
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -113,7 +148,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private int getRole() {
         SharedPreferences sharedPref = getSharedPreferences("minPrefs", MODE_PRIVATE);
-        return sharedPref.getInt("role", 0);
+        int pos = sharedPref.getInt("role", 0);
+        if (pos == 0) {
+            host = false;
+        } else if (pos == 1) {
+            host = true;
+        } else {
+            Log.wtf(TAG, "unimplemented role");
+        }
+        return pos;
     }
 
     @Override
@@ -141,11 +184,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        intentFilter.addAction("MISCREEN_PEER_UPDATE");
         //LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
         this.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //Log.v(TAG, "broadcast received " + intent.toString());
                 updateView();
             }
         }, intentFilter);
