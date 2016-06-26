@@ -30,12 +30,10 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
 
     Context context;
 
+    private BroadcastReceiver broadcastReceiver;
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
-    private BroadcastReceiver broadcastReceiver;
-    private List peers = new ArrayList();
     public ArrayList<WifiP2pDevice> connectedPeerList = new ArrayList<WifiP2pDevice>();
-    private WifiP2pManager.PeerListListener peerListListener;
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = this;
 
     final HashMap<String, String> buddies = new HashMap<String, String>();
@@ -46,26 +44,6 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
     }
 
     public void initialize() {
-
-        peerListListener = new WifiP2pManager.PeerListListener() {
-            @Override
-            public void onPeersAvailable(WifiP2pDeviceList peerList) {
-                // Out with the old, in with the new.
-                peers.clear();
-                peers.addAll(peerList.getDeviceList());
-                Log.i(TAG, "peers found (" + peers.size() + " devices)");
-
-                for (Object o : peers) {
-                    WifiP2pDevice device = (WifiP2pDevice) o;
-                    if (connectedPeerList.contains(device)) {
-                        Log.d(TAG, "device already connected to");
-                        continue;
-                    }
-                    connect(device);
-                    connectedPeerList.add(device);
-                }
-            }
-        };
 
         // BROADCAST RECEIVER
 
@@ -96,7 +74,22 @@ public class Communication implements WifiP2pManager.ConnectionInfoListener {
                     // The peer list has changed
 
                     if (manager != null) {
-                        manager.requestPeers(channel, peerListListener);
+                        manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
+                            @Override
+                            public void onPeersAvailable(WifiP2pDeviceList peerList) {
+                                Log.i(TAG, "peers found (" + peerList.getDeviceList().size() + " devices)");
+
+                                for (Object o : peerList.getDeviceList()) {
+                                    WifiP2pDevice device = (WifiP2pDevice) o;
+                                    if (connectedPeerList.contains(device)) {
+                                        Log.d(TAG, "device already connected to");
+                                        continue;
+                                    }
+                                    //connect(device);
+                                    connectedPeerList.add(device);
+                                }
+                            }
+                        });
                     }
 
                 } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
