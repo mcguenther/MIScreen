@@ -6,6 +6,7 @@ import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 
 /**
@@ -23,6 +24,8 @@ public class NetworkServiceDiscovery {
     private NsdManager.DiscoveryListener discoveryListener;
     private ServerSocket serverSocket;
 
+    private NsdManager.ResolveListener resolveListener;
+
     public NetworkServiceDiscovery(Context context) {
         nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
@@ -30,13 +33,32 @@ public class NetworkServiceDiscovery {
     public void kill() {
         // call in case app is put in background or destroyed
         //connection.tearDown();
-        nsdManager.unregisterService(registrationListener);
-        nsdManager.stopServiceDiscovery(discoveryListener);
+        if (serverSocket != null){
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "something went terribly wrong! closing socket failed");
+                // https://www.youtube.com/watch?v=t3otBjVZzT0
+            }
+        }
+        serviceName = null;
+
+        try {
+            nsdManager.unregisterService(registrationListener);
+        } catch (java.lang.IllegalArgumentException e) {
+            // listener is not registered, everything is fine
+        }
+
+        try {
+            nsdManager.stopServiceDiscovery(discoveryListener);
+        } catch (java.lang.IllegalArgumentException e) {
+            // listener is not registered, everything is fine
+        }
     }
 
     // Discovering Service
 
-    public void initializeDiscoveryListener() {
+    public void discoverService() {
 
         // Instantiate a new DiscoveryListener
         discoveryListener = new NsdManager.DiscoveryListener() {
@@ -50,7 +72,7 @@ public class NetworkServiceDiscovery {
             @Override
             public void onServiceFound(NsdServiceInfo service) {
                 // A service was found!  Do something with it.
-                Log.d(TAG, "Service discovery success" + service);
+                Log.d(TAG, "Service discovery success: " + service);
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
                     // Service type is the string containing the protocol and
                     // transport layer for this service.
@@ -59,8 +81,8 @@ public class NetworkServiceDiscovery {
                     // The name of the service tells the user what they'd be
                     // connecting to. It could be "Bob's Chat App".
                     Log.d(TAG, "Same machine: " + serviceName);
-                } else if (service.getServiceName().contains("NsdChat")){
-                    //nsdManager.resolveService(service, resolveListener);
+                } else if (service.getServiceName().contains("MIScreen")){
+                    nsdManager.resolveService(service, resolveListener);
                 }
             }
 
@@ -89,10 +111,9 @@ public class NetworkServiceDiscovery {
             }
         };
 
+        initializeResolveListener();
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
     }
-
-    // Registering / Advertising Service
 
     public void advertiseService() {
         if (serviceName != null) {
@@ -106,7 +127,33 @@ public class NetworkServiceDiscovery {
         }
     }
 
-    public void initializeServerSocket() {
+    // Internal Helper Functions
+
+    public void initializeResolveListener() {
+        resolveListener = new NsdManager.ResolveListener() {
+
+            @Override
+            public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
+                // Called when the resolve fails.  Use the error code to debug.
+                Log.e(TAG, "Resolve failed" + errorCode);
+            }
+
+            @Override
+            public void onServiceResolved(NsdServiceInfo serviceInfo) {
+                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+
+                if (serviceInfo.getServiceName().equals(serviceName)) {
+                    Log.d(TAG, "Same IP.");
+                    return;
+                }
+                NsdServiceInfo service = serviceInfo;
+                int port = service.getPort();
+                InetAddress host = service.getHost();
+            }
+        };
+    }
+
+    private void initializeServerSocket() {
         try {
             // Initialize a server socket on the next available port.
             serverSocket = new ServerSocket(0);
@@ -115,7 +162,7 @@ public class NetworkServiceDiscovery {
         }
     }
 
-    public void initializeRegistrationListener() {
+    private void initializeRegistrationListener() {
         registrationListener = new NsdManager.RegistrationListener() {
 
             @Override
@@ -124,7 +171,7 @@ public class NetworkServiceDiscovery {
                 // resolve a conflict, so update the name you initially requested
                 // with the name Android actually used.
                 serviceName = NsdServiceInfo.getServiceName();
-                Log.i(TAG, "NSD Registered: " + serviceName);
+                Log.i(TAG, "NSD Registered: " + serviceName + " port: " + NsdServiceInfo.getPort());
             }
 
             @Override
@@ -146,7 +193,7 @@ public class NetworkServiceDiscovery {
         };
     }
 
-    public void registerService(int port) {
+    private void registerService(int port) {
         // Create the NsdServiceInfo object, and populate it.
         NsdServiceInfo serviceInfo  = new NsdServiceInfo();
 

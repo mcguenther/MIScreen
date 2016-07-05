@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private boolean host = false;
 
+    private NetworkServiceDiscovery nsd;
+
 //    private Communication comm;
 //    private ArrayAdapter<WifiP2pDevice> adapter;
 
@@ -50,6 +52,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spRole.setOnItemSelectedListener(this);
         btOk.setOnClickListener(this);
         setCameraPreferences();
+
+
+        Button btAdvertise = (Button) findViewById(R.id.btAdvertise);
+        btAdvertise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nsd.advertiseService();
+            }
+        });
+
+        Button btListen = (Button) findViewById(R.id.btListen);
+        btListen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nsd.discoverService();
+            }
+        });
+
+        Button btKill = (Button) findViewById(R.id.btKill);
+        btKill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nsd.kill();
+            }
+        });
+
+
+        nsd = new NetworkServiceDiscovery(this);
 
 //        registerUpdateReceiver();
 //
@@ -103,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     protected void onPause() {
-        // TODO: kill NSD
         super.onPause();
+        nsd.kill();
     }
 
     @Override
@@ -116,8 +146,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     protected void onDestroy() {
-        // TODO: kill NSD
         super.onDestroy();
+        nsd.kill();
 //        comm.kill();
     }
 

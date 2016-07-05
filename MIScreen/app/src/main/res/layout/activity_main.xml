@@ -48,5 +48,29 @@
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/btOk" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Listen"
+        android:id="@+id/btListen"
+        android:layout_above="@+id/btOk"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Advertise"
+        android:id="@+id/btAdvertise"
+        android:layout_above="@+id/btOk"
+        android:layout_toEndOf="@+id/btListen" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kill NSD"
+        android:id="@+id/btKill"
+        android:layout_above="@+id/btOk"
+        android:layout_toEndOf="@+id/btAdvertise" />
+
 </RelativeLayout>
 
