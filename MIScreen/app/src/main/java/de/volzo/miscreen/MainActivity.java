@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private boolean host = false;
 
-    private Communication comm;
-    private ArrayAdapter<WifiP2pDevice> adapter;
+//    private Communication comm;
+//    private ArrayAdapter<WifiP2pDevice> adapter;
 
     // APP LIFECYCLE METHODS
     @Override
@@ -51,31 +51,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btOk.setOnClickListener(this);
         setCameraPreferences();
 
-        registerUpdateReceiver();
-
-        adapter = new P2pDeviceAdapter(this, R.layout.device_listview_entry, new ArrayList<WifiP2pDevice>());
-        ListView listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(adapter);
-
-        comm = new Communication(this);
-        comm.initialize();
-
-        // Wait 10sec for every device to init before network discovery is started
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                comm.discoverPeers();
-            }
-        }, 5000);
-
-        Handler handler2 = new Handler();
-        handler2.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                advertise();
-            }
-        }, 10000);
+//        registerUpdateReceiver();
+//
+//        adapter = new P2pDeviceAdapter(this, R.layout.device_listview_entry, new ArrayList<WifiP2pDevice>());
+//        ListView listView = (ListView) findViewById(R.id.listView);
+//        listView.setAdapter(adapter);
+//
+//        comm = new Communication(this);
+//        comm.initialize();
+//
+//        // Wait 10sec for every device to init before network discovery is started
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                comm.discoverPeers();
+//            }
+//        }, 5000);
+//
+//        Handler handler2 = new Handler();
+//        handler2.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                advertise();
+//            }
+//        }, 10000);
     }
 
     private void setCameraPreferences() {
@@ -118,20 +118,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         // TODO: kill NSD
         super.onDestroy();
-        comm.kill();
+//        comm.kill();
     }
 
-    // MISC
-
-    private void advertise() {
-        if (host) {
-            Log.d(TAG, "register Service");
-            comm.startRegistration();
-        } else {
-            Log.d(TAG, "discover Service");
-            comm.discoverService();
-        }
-    }
+//    // MISC
+//
+//    private void advertise() {
+//        if (host) {
+//            Log.d(TAG, "register Service");
+//            comm.startRegistration();
+//        } else {
+//            Log.d(TAG, "discover Service");
+//            comm.discoverService();
+//        }
+//    }
 
     // USER INTERFACE
 
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
         saveRole(pos);
-        advertise();
+//        advertise();
     }
 
     private void saveRole(int pos) {
@@ -193,72 +193,72 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(intent);
     }
 
-    private void updateView() {
-        if (adapter != null && comm != null) {
-            adapter.clear();
-            for (WifiP2pDevice device : comm.connectedPeerList) {
-                adapter.add(device);
-            }
-        }
-    }
-
-    // BroadcastReceiver for Update Events
-
-    public void registerUpdateReceiver() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        intentFilter.addAction("MISCREEN_PEER_UPDATE");
-        //LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
-        this.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                updateView();
-            }
-        }, intentFilter);
-    }
-
-    // ListView Adapter
-
-    private class P2pDeviceAdapter extends ArrayAdapter<WifiP2pDevice> {
-        public P2pDeviceAdapter(Context context, int textViewResourceId) {
-            super(context, textViewResourceId);
-        }
-
-        public P2pDeviceAdapter(Context context, int resource, List<WifiP2pDevice> items) {
-            super(context, resource, items);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            View v = convertView;
-
-            if (v == null) {
-                LayoutInflater vi;
-                vi = LayoutInflater.from(getContext());
-                v = vi.inflate(R.layout.device_listview_entry, null);
-            }
-
-            WifiP2pDevice e = getItem(position);
-
-            if (e != null) {
-                TextView tt1 = (TextView) v.findViewById(R.id.address);
-                TextView tt2 = (TextView) v.findViewById(R.id.name);
-
-                if (tt1 != null) {
-                    tt1.setText("address: " + e.deviceAddress);
-                }
-
-                if (tt2 != null) {
-                    tt2.setText("name: " + e.deviceName);
-                }
-
-            }
-
-            return v;
-        }
-    }
+//    private void updateView() {
+//        if (adapter != null && comm != null) {
+//            adapter.clear();
+//            for (WifiP2pDevice device : comm.connectedPeerList) {
+//                adapter.add(device);
+//            }
+//        }
+//    }
+//
+//    // BroadcastReceiver for Peer Discovery Update Events
+//
+//    public void registerUpdateReceiver() {
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+//        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+//        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+//        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+//        intentFilter.addAction("MISCREEN_PEER_UPDATE");
+//        //LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+//        this.registerReceiver(new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                updateView();
+//            }
+//        }, intentFilter);
+//    }
+//
+//    // ListView Adapter
+//
+//    private class P2pDeviceAdapter extends ArrayAdapter<WifiP2pDevice> {
+//        public P2pDeviceAdapter(Context context, int textViewResourceId) {
+//            super(context, textViewResourceId);
+//        }
+//
+//        public P2pDeviceAdapter(Context context, int resource, List<WifiP2pDevice> items) {
+//            super(context, resource, items);
+//        }
+//
+//        @Override
+//        public View getView(int position, View convertView, ViewGroup parent) {
+//
+//            View v = convertView;
+//
+//            if (v == null) {
+//                LayoutInflater vi;
+//                vi = LayoutInflater.from(getContext());
+//                v = vi.inflate(R.layout.device_listview_entry, null);
+//            }
+//
+//            WifiP2pDevice e = getItem(position);
+//
+//            if (e != null) {
+//                TextView tt1 = (TextView) v.findViewById(R.id.address);
+//                TextView tt2 = (TextView) v.findViewById(R.id.name);
+//
+//                if (tt1 != null) {
+//                    tt1.setText("address: " + e.deviceAddress);
+//                }
+//
+//                if (tt2 != null) {
+//                    tt2.setText("name: " + e.deviceName);
+//                }
+//
+//            }
+//
+//            return v;
+//        }
+//    }
 }
