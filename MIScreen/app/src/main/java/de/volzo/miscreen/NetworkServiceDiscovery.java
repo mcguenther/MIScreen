@@ -16,6 +16,9 @@ public class NetworkServiceDiscovery {
 
     private static final String TAG = NetworkServiceDiscovery.class.getName();
 
+    public InetAddress hostAddress;
+    public int hostPort;
+
     private static final String SERVICE_TYPE = "_http._tcp.";
     private NsdManager.RegistrationListener registrationListener;
     private NsdManager nsdManager;
@@ -147,8 +150,8 @@ public class NetworkServiceDiscovery {
                     return;
                 }
                 NsdServiceInfo service = serviceInfo;
-                int port = service.getPort();
-                InetAddress host = service.getHost();
+                hostPort = service.getPort();
+                hostAddress = service.getHost();
             }
         };
     }

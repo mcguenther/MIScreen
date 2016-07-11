@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i(TAG, "init");
+
         setContentView(R.layout.activity_main);
         spRole = (Spinner) findViewById(R.id.spRole);
         btOk = (Button) findViewById(R.id.btOk);
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btOk.setOnClickListener(this);
         setCameraPreferences();
 
+        Client.getInstance().manuallyInjectContext(this);
+        nsd = new NetworkServiceDiscovery(this);
 
         Button btAdvertise = (Button) findViewById(R.id.btAdvertise);
         btAdvertise.setOnClickListener(new View.OnClickListener() {
@@ -78,8 +83,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-
-        nsd = new NetworkServiceDiscovery(this);
+        Button btSendToHost = (Button) findViewById(R.id.btSendJson);
+        btSendToHost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Client.getInstance().send(nsd.hostAddress, null);
+            }
+        });
 
 //        registerUpdateReceiver();
 //
