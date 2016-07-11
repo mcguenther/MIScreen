@@ -24,5 +24,4 @@ public class Host {
             mHost = null;
         }
     }
-
 }
