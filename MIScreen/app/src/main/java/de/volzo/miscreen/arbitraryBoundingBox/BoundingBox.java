@@ -1,6 +1,7 @@
 package de.volzo.miscreen.arbitraryBoundingBox;
 
-import org.jblas.DoubleMatrix;
+import org.ejml.ops.CommonOps;
+import org.ejml.simple.SimpleMatrix;
 
 /**
  * Created by Johannes on 11.07.2016.
@@ -43,17 +44,20 @@ public class BoundingBox {
         this.maxY = maxY;
     }
 
-    public BoundingBox() {}
+    public BoundingBox() {
+    }
 
-    public BoundingBox(DoubleMatrix rotatedHull) {
+    public BoundingBox(SimpleMatrix rotatedHull) {
         // assume that rotatedHull is 2xn, carrying n points
 
-        DoubleMatrix xVals = rotatedHull.getRow(0);
-        this.minX = xVals.min();
-        this.maxX = xVals.max();
-        DoubleMatrix yVals = rotatedHull.getRow(1);
-        this.minY = yVals.min();
-        this.maxY = yVals.max();
+
+        SimpleMatrix xVals =  new SimpleMatrix(CommonOps.extractRow(rotatedHull.getMatrix(),0, null));
+
+        this.minX = CommonOps.elementMin(xVals.getMatrix());
+        this.maxX = CommonOps.elementMax(xVals.getMatrix());
+        SimpleMatrix yVals = new SimpleMatrix(CommonOps.extractRow(rotatedHull.getMatrix(),1, null));
+        this.minY = CommonOps.elementMin(yVals.getMatrix());
+        this.maxY = CommonOps.elementMax(yVals.getMatrix());
 
     }
 
@@ -61,21 +65,22 @@ public class BoundingBox {
         return Math.abs((maxX - minX) * (maxY - minY));
     }
 
-    public DoubleMatrix getPoints() {
+    public SimpleMatrix getPoints() {
         // calc upper left and lower right corner
-        DoubleMatrix pointMatrix = new DoubleMatrix(2, 2,
+        SimpleMatrix pointMatrix = new SimpleMatrix(2, 2, false,
                 minX, maxY,
                 maxX, minY);
         return pointMatrix;
     }
 
-    protected static DoubleMatrix rotatePoints(DoubleMatrix pointMatrix, Double rot) {
+    protected static SimpleMatrix rotatePoints(SimpleMatrix pointMatrix, Double rot) {
         // creating rotation matrix
-        DoubleMatrix rotMatrix = new DoubleMatrix(2, 2,
+        SimpleMatrix rotMatrix = new SimpleMatrix(2, 2, true,
                 Math.cos(rot), -1 * Math.sin(rot), //first row
                 Math.sin(rot), Math.cos(rot)); // second row
 
         // apply rotation (rotation centre doesn't matter for area computation
-        return rotMatrix.mmul(pointMatrix);
+        SimpleMatrix rotatedPoints = rotMatrix.mult(pointMatrix);
+        return rotatedPoints;
     }
 }

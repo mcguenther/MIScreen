@@ -2,7 +2,8 @@ package de.volzo.miscreen.arbitraryBoundingBox;
 
 import android.support.annotation.NonNull;
 
-import org.jblas.DoubleMatrix;
+import org.ejml.simple.SimpleMatrix;
+
 
 /**
  * Created by Johannes on 11.07.2016.
@@ -11,17 +12,25 @@ public class ArbitrarilyOrientedBoundingBox extends BoundingBox {
     private double rot;
 
 
-    public DoubleMatrix getRealWorldPoints() {
+    public MIPoint2D[] getRealWorldPoints() {
         // calc upper left and lower right corner
-        DoubleMatrix pointMatrix = new DoubleMatrix(2, 2,
+        SimpleMatrix pointMatrix = new SimpleMatrix(2, 2, false,
                 minX, maxY,
                 maxX, minY);
-        pointMatrix = rotatePoints(pointMatrix, rot);
-        return pointMatrix;
+        pointMatrix = rotatePoints(pointMatrix, this.getRot());
+
+        MIPoint2D[] points = new MIPoint2D[2];
+        points[0] = new MIPoint2D((int) Math.round(pointMatrix.get(0, 0)), (int) Math.round(pointMatrix.get(1, 0)));
+        points[1] = new MIPoint2D((int) Math.round(pointMatrix.get(0, 1)), (int) Math.round(pointMatrix.get(1, 1)));
+
+        return points;
     }
 
-    // private Edge2D[] edges;
 
+    /**
+     * Describes how an axis aligned bounding box would need to be
+     * rotated to be parallel to this oriented bounding box
+     */
     public double getRot() {
         return rot;
     }
@@ -32,7 +41,7 @@ public class ArbitrarilyOrientedBoundingBox extends BoundingBox {
         MIPoint2D[] cvHull = ConvexHull.convex_hull(displayCornerPoints);
         if (cvHull != null) {
 
-            DoubleMatrix pointMatrix = MIPoint2D.toDoubleMatrix(cvHull);
+            SimpleMatrix pointMatrix = MIPoint2D.toSimpleMatrix(cvHull);
 
             // first determining edges
             Edge2D[] edges = getEdgesFromPoints(cvHull);
@@ -46,7 +55,7 @@ public class ArbitrarilyOrientedBoundingBox extends BoundingBox {
             for (int i = 0; i < edges.length; ++i) {
                 Edge2D curEdge = edges[i];
                 Double rot = curEdge.getAngle();
-                DoubleMatrix rotatedHull = rotatePoints(pointMatrix, rot);
+                SimpleMatrix rotatedHull = rotatePoints(pointMatrix, rot);
 
                 BoundingBox bb = new BoundingBox(rotatedHull);
                 double curArea = bb.getArea();
@@ -54,7 +63,7 @@ public class ArbitrarilyOrientedBoundingBox extends BoundingBox {
                     isFirstMinimum = false;
                     minArea = curArea;
                     bestFittingBB = bb;
-                    bestFittingRot = rot;
+                    bestFittingRot = -rot;
                 }
             }
 
@@ -64,13 +73,11 @@ public class ArbitrarilyOrientedBoundingBox extends BoundingBox {
             this.minX = bestFittingBB.minX;
             this.minY = bestFittingBB.minY;
         }
-
     }
 
     @NonNull
     private Edge2D[] getEdgesFromPoints(MIPoint2D[] cvHull) {
         Edge2D[] edges = new Edge2D[cvHull.length];
-
         for (int i = 0; i < cvHull.length; ++i) {
             edges[i] = new Edge2D(cvHull[i], cvHull[(i + 1) % cvHull.length]);
         }

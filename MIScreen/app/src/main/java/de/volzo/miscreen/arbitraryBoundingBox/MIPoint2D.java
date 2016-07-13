@@ -2,7 +2,8 @@ package de.volzo.miscreen.arbitraryBoundingBox;
 
 import android.graphics.Point;
 
-import org.jblas.DoubleMatrix;
+import org.ejml.simple.SimpleMatrix;
+
 
 /**
  * Created by Johannes on 11.07.2016.
@@ -49,15 +50,25 @@ public class MIPoint2D implements Comparable<MIPoint2D> {
         return y;
     }
 
-    public DoubleMatrix toDoubleMatrix() {
-        return new DoubleMatrix(2, 1, this.getX(), this.getY());
+    public SimpleMatrix toSimpleMatrix() {
+        return new SimpleMatrix(2, 1, true, this.getX(), this.getY());
     }
 
-    public static DoubleMatrix toDoubleMatrix(MIPoint2D[] points) {
-        DoubleMatrix mat = new DoubleMatrix(0, 2);
+    public static SimpleMatrix toSimpleMatrix(MIPoint2D[] points) {
+        SimpleMatrix mat = new SimpleMatrix(2, 0);
         for (int i = 0; i < points.length; ++i) {
-            mat = DoubleMatrix.concatHorizontally(mat, points[i].toDoubleMatrix());
+            mat = mat.combine(0, SimpleMatrix.END, points[i].toSimpleMatrix());
         }
         return mat;
+    }
+
+    // cross product of two vectors
+    public int cross(MIPoint2D p) {
+        return x * p.y - y * p.x;
+    }
+
+    // subtraction of two points
+    public MIPoint2D sub(MIPoint2D p) {
+        return new MIPoint2D(x - p.x, y - p.y);
     }
 }
