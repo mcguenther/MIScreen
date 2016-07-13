@@ -59,8 +59,6 @@ public class Positioner extends ARActivity {
         spRole = (TextView) findViewById(R.id.tvStatus);
 
         Log.d(TAG, "Setting Camera preferences:");
-
-
     }
 
 
@@ -75,6 +73,20 @@ public class Positioner extends ARActivity {
     protected FrameLayout supplyFrameLayout() {
         //this.findViewById(R.id.frameLayoutPositioner).setVisibility(View.INVISIBLE);
         return (FrameLayout) this.findViewById(R.id.frameLayoutPositioner);
+    }
+
+    public float[] getTranformationMatrix() {
+        if (markerID == -1) {
+            throw new IllegalStateException();
+        }
+
+        float[] t = ARToolKit.getInstance().queryMarkerTransformation(markerID);
+
+        if (t == null || t.length == 0) {
+            throw new IllegalStateException();
+        }
+
+        return t;
     }
 
     public void displayPosition() {
