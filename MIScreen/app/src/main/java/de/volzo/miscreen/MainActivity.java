@@ -13,15 +13,9 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 
-<<<<<<< HEAD
-import org.json.JSONException;
-
-import java.util.ArrayList;
-import java.util.List;
-=======
 import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
 import de.volzo.miscreen.arbitraryBoundingBox.MIPoint2D;
->>>>>>> c9797e9912450f71006121921877ae67a10198c8
+
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
