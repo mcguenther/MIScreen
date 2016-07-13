@@ -1,5 +1,12 @@
 package de.volzo.miscreen;
 
+import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
+
+
+import java.util.List;
+
+import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
+
 import android.os.Handler;
 
 import java.io.IOException;
@@ -8,6 +15,7 @@ import java.util.Properties;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.ServerRunner;
+
 
 /**
  * Created by Johannes on 01.06.2016.
@@ -34,6 +42,17 @@ public class Host {
         if(mHost != null) {
             mHost = null;
         }
+    }
+
+    // input: transformation matrices
+    //TODO check if matrices have the correct format
+    private static ArbitrarilyOrientedBoundingBox getAOBB(float[] hostF, List<float[]> fList) {
+
+        // TODO: calc transformation matrices relative to fMatrix of host (hostF)
+        // TODO: calc 2D points from fMatrices
+        // TODO: call constructor of AOBB with 2D points
+
+        return null;
     }
 
     public void serve() throws Exception {
@@ -76,7 +95,6 @@ public class Host {
             }, MIME_HTML, html);
         }
     }
-
 }
 
 

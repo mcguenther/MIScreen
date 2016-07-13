@@ -1,33 +1,27 @@
 package de.volzo.miscreen;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 
 import android.hardware.Camera;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
+<<<<<<< HEAD
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
+=======
+import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
+import de.volzo.miscreen.arbitraryBoundingBox.MIPoint2D;
+>>>>>>> c9797e9912450f71006121921877ae67a10198c8
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
@@ -104,6 +98,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
         });
+
+        MIPoint2D[] points = new MIPoint2D[5]  ;
+        points[0] = new MIPoint2D(1,0);
+        points[1] = new MIPoint2D(4,3);
+        points[2] = new MIPoint2D(0,1);
+        points[3] = new MIPoint2D(3,4);
+        points[4] = new MIPoint2D(2,2);
+        ArbitrarilyOrientedBoundingBox AOBB = new ArbitrarilyOrientedBoundingBox(points);
+        MIPoint2D[] cornerpoints = AOBB.getRealWorldPoints();
+        Log.i(TAG, "found AOBB: " + cornerpoints[0] + ", " + cornerpoints[1]);
 
 //        registerUpdateReceiver();
 //

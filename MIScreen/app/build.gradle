@@ -26,7 +26,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:design:23.4.0'
-    compile 'org.jblas:jblas:1.2.4'
+    compile group: 'org.ejml', name: 'all', version: '0.29'
     compile 'com.nanohttpd:nanohttpd-webserver:2.1.1'
     compile 'com.android.volley:volley:1.0.0'
 }
