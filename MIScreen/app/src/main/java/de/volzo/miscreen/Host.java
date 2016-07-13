@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.ServerRunner;
 
 /**
  * Created by Johannes on 01.06.2016.
@@ -35,10 +36,9 @@ public class Host {
         }
     }
 
-    public void init() throws Exception {
+    public void serve() throws Exception {
         nano = new Nano();
     }
-
 
     private class Nano extends NanoHTTPD {
 
@@ -46,6 +46,7 @@ public class Host {
 
         public Nano() throws IOException {
             super(PORT);
+            ServerRunner.run(Nano.class);
             //start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         }
 

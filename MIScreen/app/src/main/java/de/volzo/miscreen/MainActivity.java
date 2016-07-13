@@ -24,6 +24,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +90,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
                 Client.getInstance().send(nsd.hostAddress, null);
+            }
+        });
+
+        Button btServe = (Button) findViewById(R.id.btServe);
+        btServe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Host.getInstance().serve();
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                }
             }
         });
 
