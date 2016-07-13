@@ -92,7 +92,7 @@ public class Host {
         return aobb;
     }
 
-    private static double[] floatArray2doubleArray(float[] clientFArray) {
+    public static double[] floatArray2doubleArray(float[] clientFArray) {
         double[] resultArray = new double[clientFArray.length];
 
 
