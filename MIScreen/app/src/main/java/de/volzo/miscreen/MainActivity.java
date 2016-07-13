@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btSendToHost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Client.getInstance().send(nsd.hostAddress, nsd.hostPort, null);
+                Client.getInstance().send(null);
             }
         });
 
@@ -183,7 +183,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void serviceDiscovered() {
-
+        Client.getInstance().hostAddress = nsd.hostAddress;
+        Client.getInstance().hostPort = nsd.hostPort;
     }
 
     public void startServing() {
