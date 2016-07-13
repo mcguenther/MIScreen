@@ -83,4 +83,12 @@ public class BoundingBox {
         SimpleMatrix rotatedPoints = rotMatrix.mult(pointMatrix);
         return rotatedPoints;
     }
+
+    public double getMaxWidth() {
+        int maxWidth = -1;
+        double xWidth = Math.abs(this.getMaxX() - this.getMinX());
+        double yWidth = Math.abs(this.getMaxY() - this.getMinY());
+
+        return Math.max(xWidth,yWidth);
+    }
 }
