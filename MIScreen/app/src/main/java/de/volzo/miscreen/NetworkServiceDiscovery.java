@@ -17,7 +17,7 @@ public class NetworkServiceDiscovery {
     private static final String TAG = NetworkServiceDiscovery.class.getName();
 
     public InetAddress hostAddress;
-    public int hostPort;
+    public int hostPort = -1;
 
     private static final String SERVICE_TYPE = "_http._tcp.";
     private NsdManager.RegistrationListener registrationListener;
@@ -29,7 +29,10 @@ public class NetworkServiceDiscovery {
 
     private NsdManager.ResolveListener resolveListener;
 
+    private MainActivity activity;
+
     public NetworkServiceDiscovery(Context context) {
+        activity = (MainActivity) context;
         nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
@@ -159,7 +162,7 @@ public class NetworkServiceDiscovery {
     private void initializeServerSocket() {
         try {
             // Initialize a server socket on the next available port.
-            serverSocket = new ServerSocket(0);
+            serverSocket = new ServerSocket(1337);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -174,7 +177,12 @@ public class NetworkServiceDiscovery {
                 // resolve a conflict, so update the name you initially requested
                 // with the name Android actually used.
                 serviceName = NsdServiceInfo.getServiceName();
-                Log.i(TAG, "NSD Registered: " + serviceName + " port: " + NsdServiceInfo.getPort());
+                Log.i(TAG, "NSD Registered: " + serviceName + " port: " + serverSocket.getLocalPort());
+                hostPort = serverSocket.getLocalPort();
+
+                // Service Registering Finished! Move on to advertising
+                Log.i(TAG, "STATUS: service registered. [port: " + hostPort + "]");
+                activity.startServing();
             }
 
             @Override

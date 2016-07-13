@@ -8,6 +8,9 @@ import java.util.List;
 import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
 
 import android.os.Handler;
+import android.util.Log;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -21,6 +24,8 @@ import fi.iki.elonen.ServerRunner;
  * Created by Johannes on 01.06.2016.
  */
 public class Host {
+
+    private static final String TAG = Host.class.getName();
 
     private static Host mHost = null;
     private Host() {}
@@ -55,21 +60,19 @@ public class Host {
         return null;
     }
 
-    public void serve() throws Exception {
-        nano = new Nano();
+    public void serve(int port) throws Exception {
+        nano = new Nano(port);
     }
 
     private class Nano extends NanoHTTPD {
 
-        private final static int PORT = 80;
-
-        public Nano() throws IOException {
-            super(PORT);
-            ServerRunner.run(Nano.class);
-            //start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
+        public Nano(int port) throws IOException {
+            super(port);
+            start();
+            Log.d(TAG, "serving on Port: " + port);
         }
 
-        public Response serve(String uri, String method, Properties header, Properties parms, Properties files) {
+        public Response serve(String uri, String method, Properties header, Properties params, Properties files) {
             final StringBuilder buf = new StringBuilder();
             for (Map.Entry<Object, Object> kv : header.entrySet())
                 buf.append(kv.getKey() + " : " + kv.getValue() + "\n");
@@ -81,7 +84,13 @@ public class Host {
                     }
             });
 
-            final String html = "<html><head><head><body><h1>Hello, World</h1></body></html>";
+            String body = "narf";
+            try {
+                body = (new Message()).toJson().toString();
+            } catch (JSONException e) {
+                Log.e(TAG, "acquiring JSON failed: " + e.toString());
+            }
+
             return new NanoHTTPD.Response(new Response.IStatus() {
                 @Override
                 public int getRequestStatus() {
@@ -92,7 +101,7 @@ public class Host {
                 public String getDescription() {
                     return null;
                 }
-            }, MIME_HTML, html);
+            }, MIME_HTML, body);
         }
     }
 }

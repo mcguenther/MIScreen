@@ -58,9 +58,14 @@ public class Positioner extends ARActivity {
         }
         spRole = (TextView) findViewById(R.id.tvStatus);
 
+        Client.getInstance().manuallyInjectPositioner(this);
+
         Log.d(TAG, "Setting Camera preferences:");
     }
 
+    public void receivedResponseFromHost(Message msg) {
+        // TODO
+    }
 
     // ARToolkit
     @Override

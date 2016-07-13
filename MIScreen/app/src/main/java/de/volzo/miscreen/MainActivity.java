@@ -16,6 +16,24 @@ import android.widget.Spinner;
 import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
 import de.volzo.miscreen.arbitraryBoundingBox.MIPoint2D;
 
+/*
+
+Christophers Gebrauchsanleitung für Methodenaufrufe
+
+float[] matrix = {1, 2, 3}
+
+Message msg = new Message()
+msg.transformationMatrix3D.add(matrix);
+msg.transformationMatrix2D.add(matrix);
+msg.transformationMatrixImage.add(matrix);
+
+Client.getInstance().send(msg.toJson());
+
+
+ */
+
+
+
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
@@ -53,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btAdvertise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nsd.advertiseService();
+                startAdvertising();
             }
         });
 
@@ -61,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btListen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nsd.discoverService();
+                startListening();
             }
         });
 
@@ -77,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btSendToHost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Client.getInstance().send(nsd.hostAddress, null);
+                Client.getInstance().send(nsd.hostAddress, nsd.hostPort, null);
             }
         });
 
@@ -85,11 +103,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btServe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    Host.getInstance().serve();
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                }
+                startServing();
             }
         });
 
@@ -103,15 +117,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MIPoint2D[] cornerpoints = AOBB.getRealWorldPoints();
         Log.i(TAG, "found AOBB: " + cornerpoints[0] + ", " + cornerpoints[1]);
 
-//        registerUpdateReceiver();
-//
-//        adapter = new P2pDeviceAdapter(this, R.layout.device_listview_entry, new ArrayList<WifiP2pDevice>());
-//        ListView listView = (ListView) findViewById(R.id.listView);
-//        listView.setAdapter(adapter);
-//
-//        comm = new Communication(this);
-//        comm.initialize();
-//
+
 //        // Wait 10sec for every device to init before network discovery is started
 //        Handler handler = new Handler();
 //        handler.postDelayed(new Runnable() {
@@ -120,14 +126,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //                comm.discoverPeers();
 //            }
 //        }, 5000);
-//
-//        Handler handler2 = new Handler();
-//        handler2.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                advertise();
-//            }
-//        }, 10000);
+
     }
 
     private void setCameraPreferences() {
@@ -170,20 +169,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         nsd.kill();
-//        comm.kill();
     }
 
-//    // MISC
-//
-//    private void advertise() {
-//        if (host) {
-//            Log.d(TAG, "register Service");
-//            comm.startRegistration();
-//        } else {
-//            Log.d(TAG, "discover Service");
-//            comm.discoverService();
-//        }
-//    }
+
+    // PROCESS
+
+    public void startListening() {
+        nsd.discoverService();
+    }
+
+    public void startAdvertising() {
+        nsd.advertiseService();
+    }
+
+    public void serviceDiscovered() {
+
+    }
+
+    public void startServing() {
+        try {
+            Host.getInstance().serve(nsd.hostPort);
+        } catch (Exception e) {
+            Log.e(TAG, "serving failed");
+            Log.e(TAG, e.toString());
+        }
+    }
 
     // USER INTERFACE
 
@@ -193,7 +203,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
         saveRole(pos);
-//        advertise();
+
+        // Here is where all the magic happens
+
+        if (host) {
+            startAdvertising();
+        } else {
+            startListening();
+        }
+
     }
 
     private void saveRole(int pos) {
