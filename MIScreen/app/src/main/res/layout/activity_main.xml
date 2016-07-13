@@ -80,5 +80,13 @@
         android:layout_above="@+id/btListen"
         android:layout_alignParentStart="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Serve"
+        android:id="@+id/btServe"
+        android:layout_above="@+id/btAdvertise"
+        android:layout_toEndOf="@+id/btSendJson" />
+
 </RelativeLayout>
 

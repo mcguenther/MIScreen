@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import de.volzo.miscreen.arbitraryBoundingBox.MIPoint2D;
 import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.ServerRunner;
 
 
 /**
@@ -45,7 +46,6 @@ public class Host {
             mHost = null;
         }
     }
-
 
     // input: transformation matrices
     // matrices from ARToolkit are column-major (elements are listed column-wise)
@@ -108,10 +108,9 @@ public class Host {
         return relativeT;
     }
 
-    public void init() throws Exception {
+    public void serve() throws Exception {
         nano = new Nano();
     }
-
 
     private class Nano extends NanoHTTPD {
 
@@ -119,6 +118,7 @@ public class Host {
 
         public Nano() throws IOException {
             super(PORT);
+            ServerRunner.run(Nano.class);
             //start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         }
 

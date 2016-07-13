@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
 import de.volzo.miscreen.arbitraryBoundingBox.MIPoint2D;
 
+
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getName();
@@ -77,6 +78,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
                 Client.getInstance().send(nsd.hostAddress, null);
+            }
+        });
+
+        Button btServe = (Button) findViewById(R.id.btServe);
+        btServe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Host.getInstance().serve();
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                }
             }
         });
 
