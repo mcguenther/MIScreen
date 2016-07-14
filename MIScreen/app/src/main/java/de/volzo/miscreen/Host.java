@@ -124,7 +124,7 @@ public class Host {
         messageVault.put(msg.deviceIdentifier, msg);
 
         for (Map.Entry<String, Message> entry : messageVault.entrySet()) {
-            // TODO ...
+
         }
 
         return new Message();
