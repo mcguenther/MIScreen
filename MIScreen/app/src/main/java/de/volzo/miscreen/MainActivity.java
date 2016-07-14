@@ -186,7 +186,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void serviceDiscovered() {
-        Log.i(TAG, "service discovered: " + nsd.hostAddress + " " + nsd.hostPort);
+        Log.i(TAG, "STATUS service discovered: " + nsd.hostAddress + " " + nsd.hostPort);
+
+        Client.getInstance().hostAddress = nsd.hostAddress;
+        Client.getInstance().hostPort = nsd.hostPort;
+    }
+
+    public void serviceRegistered() {
+        Log.i(TAG, "STATUS service registered: " + nsd.hostAddress + " " + nsd.hostPort);
 
         Client.getInstance().hostAddress = nsd.hostAddress;
         Client.getInstance().hostPort = nsd.hostPort;
@@ -205,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         nsd.kill();
     }
 
+
     // USER INTERFACE
 
     // as taken from https://developer.android.com/guide/topics/ui/controls/spinner.html
@@ -219,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (host) {
             stopNSD();
             startAdvertising();
-            //startListening();
         } else {
             stopNSD();
             startListening();

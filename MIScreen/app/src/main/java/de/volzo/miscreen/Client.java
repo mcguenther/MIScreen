@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Created by volzotan on 11.07.16.
@@ -53,6 +54,16 @@ public class Client {
     }
 
     public void send(JSONObject obj) {
+
+        if (hostAddress == null) {
+            Log.w(TAG, "no Host known. assuming localhost.");
+            try {
+                hostAddress = InetAddress.getLocalHost();
+            } catch (UnknownHostException e) {
+                Log.e(TAG, "Localhost could not be guessed. abort");
+                return;
+            }
+        }
 
         Log.i(TAG, "send json");
 
