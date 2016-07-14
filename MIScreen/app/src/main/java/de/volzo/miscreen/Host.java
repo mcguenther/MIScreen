@@ -99,7 +99,7 @@ public class Host {
         return aobb;
     }
 
-    private static List<double[]> convertMsgs2ListOfDoubles(Collection<Message>) {
+    private static List<double[]> convertMsgs2ListOfDoubles(Collection<Message> messages) {
         // TODO implement function
         return new ArrayList<>();
     }
