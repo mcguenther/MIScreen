@@ -24,13 +24,15 @@ public class Client {
     private Positioner positioner;
 
     private static Client client = null;
-    private Client() {}
+
+    private Client() {
+    }
 
     InetAddress hostAddress;
     Integer hostPort;
 
     public static Client getInstance() {
-        if(client == null) {
+        if (client == null) {
             client = new Client();
         }
         return client;
@@ -41,7 +43,7 @@ public class Client {
     }
 
     public static void destroy() {
-        if(client != null) {
+        if (client != null) {
             client = null;
         }
     }
@@ -49,30 +51,26 @@ public class Client {
     public void manuallyInjectContext(Context context) {
         this.context = context;
     }
+
     public void manuallyInjectPositioner(Positioner positioner) {
         this.positioner = positioner;
     }
 
     public void send(JSONObject obj) {
-
-        String url = "http:/" + hostAddress.toString() + ":" + (hostPort+1);
+        String url;
 
         if (hostAddress == null) {
             Log.w(TAG, "no Host known. assuming localhost.");
-            try {
-                hostAddress = InetAddress.getLocalHost();
-                url = "http://" + hostAddress.toString() + ":" + (hostPort+1);
-            } catch (UnknownHostException e) {
-                Log.e(TAG, "Localhost could not be guessed. abort");
-                return;
-            }
+            url = "http://127.0.0.1:" + (hostPort + 1);
+        } else {
+            url = "http://" + hostAddress.toString() + ":" + (hostPort + 1);
         }
 
         Log.i(TAG, "send json");
 
         try {
 
-            JsonObjectRequest request = new JsonObjectRequest(url, (new Message()).toJson(), new Response.Listener<JSONObject>() {
+            JsonObjectRequest request = new JsonObjectRequest(url, obj, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.i(TAG, response.toString());
@@ -94,7 +92,7 @@ public class Client {
             RequestQueue queue = Volley.newRequestQueue(context);
             queue.add(request);
 
-        }  catch (Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
     }

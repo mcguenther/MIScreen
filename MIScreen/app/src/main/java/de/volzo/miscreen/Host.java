@@ -144,11 +144,13 @@ public class Host {
 
 
     private Message matricesIncoming(Message msg) throws Exception {
+
+        messageVault.put(msg.deviceIdentifier, msg);
+
         String uuid = Support.getInstance().uuid;
         if (!this.messageVault.containsKey(uuid)) {
             throw new Exception("Host has no location yet");
         }
-        messageVault.put(msg.deviceIdentifier, msg);
 
         Message hostMsg = this.messageVault.get(uuid);
         List<double[]> hostCorners = convertMsg2DoubleArrays(hostMsg);
