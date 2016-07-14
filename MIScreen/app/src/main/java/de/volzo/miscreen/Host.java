@@ -30,6 +30,8 @@ import fi.iki.elonen.ServerRunner;
  */
 public class Host {
 
+    Map<String, Message> messageVault = new HashMap<String, Message>();
+
     private static final String TAG = Host.class.getName();
 
     private static Host mHost = null;
@@ -119,7 +121,11 @@ public class Host {
 
 
     private Message matricesIncoming(Message msg) {
-        // TODO
+        messageVault.put(msg.deviceIdentifier, msg);
+
+        for (Map.Entry<String, Message> entry : messageVault.entrySet()) {
+            // TODO ...
+        }
 
         return new Message();
     }
