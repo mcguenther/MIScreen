@@ -3,6 +3,7 @@ package de.volzo.miscreen;
 import android.content.Context;
 import android.provider.Settings;
 
+import org.ejml.simple.SimpleMatrix;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,5 +76,17 @@ public class Message {
         }
 
         obj.put(key, arr);
+    }
+
+
+    public static double[] convertSimpleMatrixToArray(SimpleMatrix m) {
+        SimpleMatrix reshapeM = m.copy();
+        int noElems = reshapeM.getNumElements();
+        reshapeM.reshape(1, noElems);
+        double[] array = new double[noElems];
+        for (int i = 0; i < reshapeM.getNumElements(); ++i) {
+            array[i] =  reshapeM.get(0, i);
+        }
+        return array;
     }
 }
