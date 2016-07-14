@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (host) {
             stopNSD();
             startAdvertising();
-            startListening();
+            //startListening();
         } else {
             stopNSD();
             startListening();

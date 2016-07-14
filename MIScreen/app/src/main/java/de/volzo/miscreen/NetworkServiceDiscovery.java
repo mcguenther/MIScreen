@@ -87,10 +87,11 @@ public class NetworkServiceDiscovery {
                     // The name of the service tells the user what they'd be
                     // connecting to. It could be "Bob's Chat App".
                     Log.d(TAG, "Same machine: " + serviceName);
-                    if (hostPort < 0){
+                    if (hostPort < 0) {
                         nsdManager.resolveService(service, resolveListener);
                     }
-                } else if (service.getServiceName().contains("MIScreen")){
+                } else if (service.getServiceName().contains("MIScreen")) {
+                    Log.d(TAG, "Remote machine: " + serviceName);
                     nsdManager.resolveService(service, resolveListener);
                 }
             }
