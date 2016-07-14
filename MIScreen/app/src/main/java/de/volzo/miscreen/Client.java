@@ -58,7 +58,7 @@ public class Client {
 
         try {
 
-            final String url = "http:/" + hostAddress.toString() + ":" + hostPort;
+            final String url = "http:/" + hostAddress.toString() + ":" + (hostPort+1);
             final JSONObject jsonTestObject = new JSONObject("{\"type\":\"example\"}");
 
             JsonObjectRequest request = new JsonObjectRequest(url, jsonTestObject, new Response.Listener<JSONObject>() {
@@ -84,7 +84,7 @@ public class Client {
             queue.add(request);
 
         }  catch (Exception e) {
-            Log.e(TAG, exists().toString());
+            Log.e(TAG, e.toString());
         }
     }
 

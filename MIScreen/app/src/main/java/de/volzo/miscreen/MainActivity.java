@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btKill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nsd.kill();
+                stopNSD();
             }
         });
 
@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         nsd.kill();
     }
 
-
     // PROCESS
 
     public void startListening() {
@@ -183,17 +182,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void serviceDiscovered() {
+        Log.i(TAG, "service discovered: " + nsd.hostAddress + " " + nsd.hostPort);
+
         Client.getInstance().hostAddress = nsd.hostAddress;
         Client.getInstance().hostPort = nsd.hostPort;
     }
 
     public void startServing() {
         try {
-            Host.getInstance().serve(nsd.hostPort);
+            Host.getInstance().serve(nsd.hostPort+1);
         } catch (Exception e) {
             Log.e(TAG, "serving failed");
             Log.e(TAG, e.toString());
         }
+    }
+
+    public void stopNSD() {
+        nsd.kill();
     }
 
     // USER INTERFACE
@@ -208,8 +213,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Here is where all the magic happens
 
         if (host) {
+            stopNSD();
             startAdvertising();
         } else {
+            stopNSD();
             startListening();
         }
 

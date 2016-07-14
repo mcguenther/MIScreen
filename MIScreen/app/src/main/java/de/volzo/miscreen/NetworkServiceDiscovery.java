@@ -146,7 +146,7 @@ public class NetworkServiceDiscovery {
 
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+                Log.i(TAG, "Resolve Succeeded. " + serviceInfo);
 
                 if (serviceInfo.getServiceName().equals(serviceName)) {
                     Log.d(TAG, "Same IP.");
@@ -155,6 +155,7 @@ public class NetworkServiceDiscovery {
                 NsdServiceInfo service = serviceInfo;
                 hostPort = service.getPort();
                 hostAddress = service.getHost();
+                activity.serviceDiscovered();
             }
         };
     }
@@ -162,7 +163,7 @@ public class NetworkServiceDiscovery {
     private void initializeServerSocket() {
         try {
             // Initialize a server socket on the next available port.
-            serverSocket = new ServerSocket(1337);
+            serverSocket = new ServerSocket(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -210,7 +211,7 @@ public class NetworkServiceDiscovery {
 
         // The name is subject to change based on conflicts
         // with other services advertised on the same network.
-        serviceInfo.setServiceName("MIScreenFoo");
+        serviceInfo.setServiceName("MIScreen");
         serviceInfo.setServiceType(SERVICE_TYPE);
         serviceInfo.setPort(port);
 

@@ -125,36 +125,18 @@ public class Host {
             Log.d(TAG, "serving on Port: " + port);
         }
 
-        public Response serve(String uri, String method, Properties header, Properties params, Properties files) {
-            final StringBuilder buf = new StringBuilder();
-            for (Map.Entry<Object, Object> kv : header.entrySet())
-                buf.append(kv.getKey() + " : " + kv.getValue() + "\n");
-            Handler handler = new Handler();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println(buf);
-                }
-            });
+        public Response serve(IHTTPSession session) {
+            Map<String, String> parms = session.getParms();
 
             String body = "narf";
             try {
                 body = (new Message()).toJson().toString();
+                System.out.println(body);
             } catch (JSONException e) {
                 Log.e(TAG, "acquiring JSON failed: " + e.toString());
             }
 
-            return new NanoHTTPD.Response(new Response.IStatus() {
-                @Override
-                public int getRequestStatus() {
-                    return 400;
-                }
-
-                @Override
-                public String getDescription() {
-                    return null;
-                }
-            }, MIME_HTML, body);
+            return new Response(Response.Status.OK, "application/json", body);
         }
     }
 }
