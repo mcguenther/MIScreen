@@ -55,6 +55,9 @@ public class Positioner extends ARActivity {
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         }
         spRole = (TextView) findViewById(R.id.tvStatus);
+        Client.getInstance().manuallyInjectPositioner(this);
+
+        Log.d(TAG, "Setting Camera preferences:");
 
         writePossibleDisplayCorners();
     }
@@ -65,6 +68,9 @@ public class Positioner extends ARActivity {
         // TODO send matrices
     }
 
+    public void receivedResponseFromHost(Message msg) {
+        // TODO
+    }
 
     public List<SimpleMatrix> getDeviceCornersTransformationsFromMarker() throws Exception {
         float[] fMarkerToCameraFloat = getTranformationMatrixMarkerToCamera();
@@ -126,7 +132,6 @@ public class Positioner extends ARActivity {
         return corners;
     }
 
-    
     // ARToolkit
     @Override
     protected ARRenderer supplyRenderer() {

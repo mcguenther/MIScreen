@@ -17,7 +17,7 @@ public class NetworkServiceDiscovery {
     private static final String TAG = NetworkServiceDiscovery.class.getName();
 
     public InetAddress hostAddress;
-    public int hostPort;
+    public int hostPort = -1;
 
     private static final String SERVICE_TYPE = "_http._tcp.";
     private NsdManager.RegistrationListener registrationListener;
@@ -29,7 +29,10 @@ public class NetworkServiceDiscovery {
 
     private NsdManager.ResolveListener resolveListener;
 
+    private MainActivity activity;
+
     public NetworkServiceDiscovery(Context context) {
+        activity = (MainActivity) context;
         nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
@@ -143,7 +146,7 @@ public class NetworkServiceDiscovery {
 
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+                Log.i(TAG, "Resolve Succeeded. " + serviceInfo);
 
                 if (serviceInfo.getServiceName().equals(serviceName)) {
                     Log.d(TAG, "Same IP.");
@@ -152,6 +155,7 @@ public class NetworkServiceDiscovery {
                 NsdServiceInfo service = serviceInfo;
                 hostPort = service.getPort();
                 hostAddress = service.getHost();
+                activity.serviceDiscovered();
             }
         };
     }
@@ -174,7 +178,12 @@ public class NetworkServiceDiscovery {
                 // resolve a conflict, so update the name you initially requested
                 // with the name Android actually used.
                 serviceName = NsdServiceInfo.getServiceName();
-                Log.i(TAG, "NSD Registered: " + serviceName + " port: " + NsdServiceInfo.getPort());
+                Log.i(TAG, "NSD Registered: " + serviceName + " port: " + serverSocket.getLocalPort());
+                hostPort = serverSocket.getLocalPort();
+
+                // Service Registering Finished! Move on to advertising
+                Log.i(TAG, "STATUS: service registered. [port: " + hostPort + "]");
+                activity.startServing();
             }
 
             @Override
@@ -202,7 +211,7 @@ public class NetworkServiceDiscovery {
 
         // The name is subject to change based on conflicts
         // with other services advertised on the same network.
-        serviceInfo.setServiceName("MIScreenFoo");
+        serviceInfo.setServiceName("MIScreen");
         serviceInfo.setServiceType(SERVICE_TYPE);
         serviceInfo.setPort(port);
 

@@ -53,8 +53,11 @@ public class Message {
 
     private void encodeMatrices(JSONObject obj, String key, List<float[]> payload) throws JSONException {
         JSONArray arr = new JSONArray();
-        for (float[] payloadMat : payload) {
-            arr.put(new JSONArray(payloadMat));
+
+        if (payload != null) {
+            for (float[] payloadMat : payload) {
+                arr.put(new JSONArray(payloadMat));
+            }
         }
 
         obj.put(key, arr);

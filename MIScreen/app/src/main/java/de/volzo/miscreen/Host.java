@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Handler;
+import android.util.Log;
+
+import org.json.JSONException;
 
 import org.ejml.simple.SimpleMatrix;
 
@@ -22,6 +25,8 @@ import fi.iki.elonen.ServerRunner;
  * Created by Johannes on 01.06.2016.
  */
 public class Host {
+
+    private static final String TAG = Host.class.getName();
 
     private static Host mHost = null;
 
@@ -108,44 +113,30 @@ public class Host {
         return relativeT;
     }
 
-    public void serve() throws Exception {
-        nano = new Nano();
+    public void serve(int port) throws Exception {
+        nano = new Nano(port);
     }
 
     private class Nano extends NanoHTTPD {
 
-        private final static int PORT = 80;
-
-        public Nano() throws IOException {
-            super(PORT);
-            ServerRunner.run(Nano.class);
-            //start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
+        public Nano(int port) throws IOException {
+            super(port);
+            start();
+            Log.d(TAG, "serving on Port: " + port);
         }
 
-        public Response serve(String uri, String method, Properties header, Properties parms, Properties files) {
-            final StringBuilder buf = new StringBuilder();
-            for (Map.Entry<Object, Object> kv : header.entrySet())
-                buf.append(kv.getKey() + " : " + kv.getValue() + "\n");
-            Handler handler = new Handler();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println(buf);
-                }
-            });
+        public Response serve(IHTTPSession session) {
+            Map<String, String> parms = session.getParms();
 
-            final String html = "<html><head><head><body><h1>Hello, World</h1></body></html>";
-            return new NanoHTTPD.Response(new Response.IStatus() {
-                @Override
-                public int getRequestStatus() {
-                    return 400;
-                }
+            String body = "narf";
+            try {
+                body = (new Message()).toJson().toString();
+                System.out.println(body);
+            } catch (JSONException e) {
+                Log.e(TAG, "acquiring JSON failed: " + e.toString());
+            }
 
-                @Override
-                public String getDescription() {
-                    return null;
-                }
-            }, MIME_HTML, html);
+            return new Response(Response.Status.OK, "application/json", body);
         }
     }
 }
