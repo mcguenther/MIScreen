@@ -1,5 +1,8 @@
 package de.volzo.miscreen;
 
+import android.content.Context;
+import android.provider.Settings;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,13 +15,19 @@ import java.util.List;
  */
 public class Message {
 
-    List<float[]> transformationMatrix3D;
-    List<float[]> transformationMatrix2D;
-    List<float[]> transformationMatrixImage;
+    String deviceIdentifier;
 
-    public Message() {}
+    List<double[]> transformationMatrix3D;
+    List<double[]> transformationMatrix2D;
+    List<double[]> transformationMatrixImage;
+
+    public Message() {
+        this.deviceIdentifier = Support.getInstance().uuid;
+    }
 
     public Message(JSONObject o) throws JSONException {
+        this.deviceIdentifier = (String) o.getString("deviceIdentifier");
+
         this.transformationMatrix3D = decodeMatrices(o, "matrix3D");
         this.transformationMatrix2D = decodeMatrices(o, "matrix2D");
         this.transformationMatrixImage = decodeMatrices(o, "matrixImage");
@@ -28,6 +37,8 @@ public class Message {
     public JSONObject toJson() throws JSONException {
         JSONObject obj = new JSONObject();
 
+        obj.put("deviceIdentifier", deviceIdentifier);
+
         encodeMatrices(obj, "matrix3D", transformationMatrix3D);
         encodeMatrices(obj, "matrix2D", transformationMatrix2D);
         encodeMatrices(obj, "matrixImage", transformationMatrixImage);
@@ -35,15 +46,15 @@ public class Message {
         return obj;
     }
 
-    private List<float[]> decodeMatrices(JSONObject obj, String key) throws JSONException{
+    private List<double[]> decodeMatrices(JSONObject obj, String key) throws JSONException{
         JSONArray matrices = obj.getJSONArray(key);
-        List<float[]> list = new ArrayList<float[]>();
+        List<double[]> list = new ArrayList<double[]>();
         for (int listindex=0; listindex < matrices.length(); listindex++) {
-            float[] arr = new float[16];
+            double[] arr = new double[16];
 
             JSONArray matrix = matrices.getJSONArray(listindex);
             for (int arrindex=0; arrindex < matrix.length(); arrindex++) {
-                arr[arrindex] = (float) matrix.getDouble(arrindex);
+                arr[arrindex] = (double) matrix.getDouble(arrindex);
             }
             list.add(arr);
         }
@@ -51,11 +62,11 @@ public class Message {
         return list;
     }
 
-    private void encodeMatrices(JSONObject obj, String key, List<float[]> payload) throws JSONException {
+    private void encodeMatrices(JSONObject obj, String key, List<double[]> payload) throws JSONException {
         JSONArray arr = new JSONArray();
 
         if (payload != null) {
-            for (float[] payloadMat : payload) {
+            for (double[] payloadMat : payload) {
                 arr.put(new JSONArray(payloadMat));
             }
         }

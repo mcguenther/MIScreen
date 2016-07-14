@@ -22,7 +22,7 @@ Christophers Gebrauchsanleitung für Methodenaufrufe
 
 float[] matrix = {1, 2, 3}
 
-Message msg = new Message()
+Message msg = new Message(this);
 msg.transformationMatrix3D.add(matrix);
 msg.transformationMatrix2D.add(matrix);
 msg.transformationMatrixImage.add(matrix);
@@ -95,7 +95,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btSendToHost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Client.getInstance().send(null);
+                try {
+                    Client.getInstance().send(new Message().toJson());
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                }
             }
         });
 
