@@ -105,8 +105,15 @@ public class Host {
     }
 
     private static List<double[]> convertMsgs2ListOfDoubles(Collection<Message> messages) {
-        // TODO implement function
-        return new ArrayList<>();
+        List<double[]> matrixlist = new ArrayList<double[]>();
+
+        for (Message msg : messages) {
+            for (double[] matrix : msg.transformationMatrix3D) {
+                matrixlist.add(matrix);
+            }
+        }
+
+        return matrixlist;
     }
 
     private static List<double[]> convertMsg2DoubleArrays(Message message) {
@@ -142,8 +149,6 @@ public class Host {
             throw new Exception("Host has no location yet");
         }
         messageVault.put(msg.deviceIdentifier, msg);
-
-        List<double[]> matrices = convertMsgs2ListOfDoubles(this.messageVault.values());
 
         Message hostMsg = this.messageVault.get(uuid);
         List<double[]> hostCorners = convertMsg2DoubleArrays(hostMsg);
