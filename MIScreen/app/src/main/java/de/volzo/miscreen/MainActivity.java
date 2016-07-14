@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         editor.putString("pref_cameraIndex", Integer.toString(index));
-        editor.putString("pref_cameraResolution", "800x600");
+        editor.putString("pref_cameraResolution", "640x480");
 
         editor.commit();
     }
