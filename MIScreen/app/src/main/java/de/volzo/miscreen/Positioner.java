@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Positioner extends ARActivity {
-
     public static int MARKER_SIZE = 80;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 55;
     private int markerID = -1;
@@ -58,6 +57,12 @@ public class Positioner extends ARActivity {
         spRole = (TextView) findViewById(R.id.tvStatus);
 
         writePossibleDisplayCorners();
+    }
+    
+    public void sendTransMatrices() throws Exception {
+        List<SimpleMatrix> matrices = getDeviceCornersTransformationsFromMarker();
+        Client.getInstance();
+        // TODO send matrices
     }
 
 
@@ -121,8 +126,7 @@ public class Positioner extends ARActivity {
         return corners;
     }
 
-
-
+    
     // ARToolkit
     @Override
     protected ARRenderer supplyRenderer() {
