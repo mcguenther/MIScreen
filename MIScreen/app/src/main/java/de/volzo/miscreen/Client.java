@@ -55,10 +55,13 @@ public class Client {
 
     public void send(JSONObject obj) {
 
+        String url = "http:/" + hostAddress.toString() + ":" + (hostPort+1);
+
         if (hostAddress == null) {
             Log.w(TAG, "no Host known. assuming localhost.");
             try {
                 hostAddress = InetAddress.getLocalHost();
+                url = "http://" + hostAddress.toString() + ":" + (hostPort+1);
             } catch (UnknownHostException e) {
                 Log.e(TAG, "Localhost could not be guessed. abort");
                 return;
@@ -68,8 +71,6 @@ public class Client {
         Log.i(TAG, "send json");
 
         try {
-
-            final String url = "http:/" + hostAddress.toString() + ":" + (hostPort+1);
 
             JsonObjectRequest request = new JsonObjectRequest(url, (new Message()).toJson(), new Response.Listener<JSONObject>() {
                 @Override
