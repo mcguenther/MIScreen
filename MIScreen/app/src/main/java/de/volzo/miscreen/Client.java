@@ -63,7 +63,7 @@ public class Client {
             Log.w(TAG, "no Host known. assuming localhost.");
             url = "http://127.0.0.1:" + (hostPort + 1);
         } else {
-            url = "http://" + hostAddress.toString() + ":" + (hostPort + 1);
+            url = "http:/" + hostAddress.toString() + ":" + (hostPort + 1);
         }
 
         Log.i(TAG, "send json");
@@ -76,7 +76,13 @@ public class Client {
                     Log.i(TAG, response.toString());
                     // TODO do something with the returned JSON obj
                     if (positioner != null) {
-                        positioner.receivedResponseFromHost(null);
+
+                        try {
+                            Message rtMsg = new Message(response);
+                            positioner.receivedResponseFromHost(rtMsg);
+                        } catch (org.json.JSONException e) {
+                            Log.e(TAG, "Message could not be retrieved; received JSON: " + response.toString());
+                        }
                     } else {
                         Log.w(TAG, "no Positioner found for callback");
                     }

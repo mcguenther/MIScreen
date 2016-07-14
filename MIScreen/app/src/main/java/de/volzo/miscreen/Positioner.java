@@ -80,7 +80,7 @@ public class Positioner extends ARActivity {
                     Log.d(TAG, "Trying to send transformation matrices: " + e.getMessage());
                 }
             }
-        }, 0, 2 * 1000);
+        }, 0, 10 * 1000);
 
     }
 
@@ -105,7 +105,7 @@ public class Positioner extends ARActivity {
         String printM = transMM.toString();
 
         Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
+        int duration = Toast.LENGTH_LONG;
 
         Toast toast = Toast.makeText(context, printM, duration);
         toast.show();
@@ -113,6 +113,7 @@ public class Positioner extends ARActivity {
 
     public List<SimpleMatrix> getDeviceCornersTransformationsFromMarker() throws Exception {
         float[] fMarkerToCameraFloat = getTranformationMatrixMarkerToCamera();
+
         SimpleMatrix fMarkerToCamera = new SimpleMatrix(4, 4, false, Host.floatArray2doubleArray(fMarkerToCameraFloat));
         List<SimpleMatrix> fCameraToCorners = getDeviceCornersTransformationsFromCamera();
         List<SimpleMatrix> fMarkerToCorners = new ArrayList<>();
@@ -130,23 +131,23 @@ public class Positioner extends ARActivity {
         SimpleMatrix ulCorner = new SimpleMatrix(4, 4, true,
                 1, 0, 0, -10,
                 0, 1, 0, -50,
-                0, 0, 0, 0,
+                0, 0, 1, 0,
                 0, 0, 0, 1);
 
         SimpleMatrix urCorner = new SimpleMatrix(4, 4, true,
                 1, 0, 0, 50,
                 0, 1, 0, -5,
-                0, 0, 0, 0,
+                0, 0, 1, 0,
                 0, 0, 0, 1);
         SimpleMatrix llCorner = new SimpleMatrix(4, 4, true,
                 1, 0, 0, -10,
                 0, 1, 0, -80,
-                0, 0, 0, 0,
+                0, 0, 1, 0,
                 0, 0, 0, 1);
         SimpleMatrix lrCorner = new SimpleMatrix(4, 4, true,
                 1, 0, 0, 50,
                 0, 1, 0, -80,
-                0, 0, 0, 0,
+                0, 0, 1, 0,
                 0, 0, 0, 1);
 
         List<SimpleMatrix> corners = new ArrayList<>();

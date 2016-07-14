@@ -94,13 +94,21 @@ public class Host {
 
     private static SimpleMatrix projectIntoXYPlane(SimpleMatrix relativeF) {
         // create projetion matrix to project from 4x4 (homogeneous 3D space) to 3x3 (homogeneous 2D space)
-        SimpleMatrix p = new SimpleMatrix(4, 4, true,
+        SimpleMatrix p = new SimpleMatrix(3, 4, true,
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 //0, 0, 0, 0,
                 0, 0, 0, 1);
 
-        SimpleMatrix planarF = p.mult(relativeF);
+
+        SimpleMatrix f = p.mult(relativeF);
+
+        SimpleMatrix xCol = f.extractVector(false, 0);
+        SimpleMatrix yCol = f.extractVector(false, 1);
+        SimpleMatrix homoCol = f.extractVector(false, 3);
+
+        SimpleMatrix xyCols = xCol.combine(0, SimpleMatrix.END, yCol);
+        SimpleMatrix planarF = xyCols.combine(0, SimpleMatrix.END, homoCol);
         return planarF;
     }
 
@@ -160,7 +168,7 @@ public class Host {
         List<double[]> allCorners = convertMsgs2ListOfDoubles(this.messageVault.values());
 
         // TODO apply results from bounding box calculation
-        ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, allCorners);
+        //ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, allCorners);
         //double width = aobb.getMaxWidth();
 
         SimpleMatrix hostMatrix = new SimpleMatrix(4, 4, true, topLeftHostCorner);
