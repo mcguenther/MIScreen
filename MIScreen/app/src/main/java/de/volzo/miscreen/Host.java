@@ -3,6 +3,7 @@ package de.volzo.miscreen;
 import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,8 +62,7 @@ public class Host {
     // input: transformation matrices
     // matrices from ARToolkit are column-major (elements are listed column-wise)
     // --> use new SimpleMatrix(4, 4, false,  <<arToolkitArray>>);
-    private static ArbitrarilyOrientedBoundingBox getAOBB(float[] hostFArray, List<float[]> fList) {
-        double[] hostFArrayDouble = floatArray2doubleArray(hostFArray);
+    private static ArbitrarilyOrientedBoundingBox getAOBB(double[] hostFArrayDouble, List<double[]> fList) {
         SimpleMatrix hostF = new SimpleMatrix(3, 3, false, hostFArrayDouble);
 
         // create projetion matrix to project from 4x4 (homogeneous 3D space) to 3x3 (homogeneous 2D space)
@@ -75,8 +75,7 @@ public class Host {
         SimpleMatrix originVector = new SimpleMatrix(3, 1, true, 0, 0, 0);
         List<MIPoint2D> cornerPoints = new ArrayList<>();
 
-        for (float[] clientFArray : fList) {
-            double[] clientFArrayDouble = floatArray2doubleArray(clientFArray);
+        for (double[] clientFArrayDouble : fList) {
             SimpleMatrix clientF = new SimpleMatrix(3, 3, false, clientFArrayDouble);
 
             // TODO: calc 2D points from fMatrices
@@ -94,13 +93,25 @@ public class Host {
             cornerPoints.add(point);
         }
 
-
         MIPoint2D[] cornerArray = cornerPoints.toArray(new MIPoint2D[cornerPoints.size()]);
-
         ArbitrarilyOrientedBoundingBox aobb = new ArbitrarilyOrientedBoundingBox(cornerArray);
 
-
         return aobb;
+    }
+
+    private static List<double[]> convertMsgs2ListOfDoubles(Collection<Message> messages) {
+        // TODO implement function
+        return new ArrayList<>();
+    }
+
+    private static List<double[]> convertMsg2DoubleArrays(Message message) {
+        ArrayList<double[]> doubleList = new ArrayList<double[]>();
+        for(int i = 0; i < message.transformationMatrix3D.size(); ++i) {
+            double[] newMatrix = message.transformationMatrix3D.get(i);
+            doubleList.add(newMatrix);
+        }
+
+        return doubleList;
     }
 
     public static double[] floatArray2doubleArray(float[] clientFArray) {
@@ -120,16 +131,30 @@ public class Host {
     }
 
 
-    private Message matricesIncoming(Message msg) {
+    private Message matricesIncoming(Message msg) throws Exception {
+        String uuid = Support.getInstance().uuid;
+        if(!this.messageVault.containsKey(uuid)) {
+            throw new Exception("Host has no location yet");
+        }
         messageVault.put(msg.deviceIdentifier, msg);
+
 
         for (Map.Entry<String, Message> entry : messageVault.entrySet()) {
 
         }
 
+        List<double[]> matrices = convertMsgs2ListOfDoubles(this.messageVault.values());
+
+        Message hostMsg = this.messageVault.get(uuid);
+        List<double[]> hostCorners = convertMsg2DoubleArrays(hostMsg);
+        double[] topLeftHostCorner = hostCorners.get(0);
+        ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, matrices);
+        
+
+        //Support.getInstance().uuid
+
         return new Message();
     }
-
 
 
     public void serve(int port) throws Exception {
