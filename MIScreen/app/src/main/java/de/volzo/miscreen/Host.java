@@ -65,13 +65,6 @@ public class Host {
     private static ArbitrarilyOrientedBoundingBox getAOBB(double[] hostFArrayDouble, List<double[]> fList) {
         SimpleMatrix hostF = new SimpleMatrix(3, 3, false, hostFArrayDouble);
 
-        // create projetion matrix to project from 4x4 (homogeneous 3D space) to 3x3 (homogeneous 2D space)
-        SimpleMatrix p = new SimpleMatrix(4, 4, true,
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 1);
-
         SimpleMatrix originVector = new SimpleMatrix(3, 1, true, 0, 0, 0);
         List<MIPoint2D> cornerPoints = new ArrayList<>();
 
@@ -82,7 +75,7 @@ public class Host {
             SimpleMatrix relativeF = getRelativeTransformation(hostF, clientF);
 
             // project tranformation into xy-plane
-            SimpleMatrix planarF = p.mult(relativeF);
+            SimpleMatrix planarF = projectIntoXYPlane(relativeF);
 
             // transform point from origin
             SimpleMatrix planarPoint = planarF.mult(originVector);
@@ -99,6 +92,18 @@ public class Host {
         return aobb;
     }
 
+    private static SimpleMatrix projectIntoXYPlane(SimpleMatrix relativeF) {
+        // create projetion matrix to project from 4x4 (homogeneous 3D space) to 3x3 (homogeneous 2D space)
+        SimpleMatrix p = new SimpleMatrix(4, 4, true,
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                //0, 0, 0, 0,
+                0, 0, 0, 1);
+
+        SimpleMatrix planarF = p.mult(relativeF);
+        return planarF;
+    }
+
     private static List<double[]> convertMsgs2ListOfDoubles(Collection<Message> messages) {
         // TODO implement function
         return new ArrayList<>();
@@ -106,7 +111,7 @@ public class Host {
 
     private static List<double[]> convertMsg2DoubleArrays(Message message) {
         ArrayList<double[]> doubleList = new ArrayList<double[]>();
-        for(int i = 0; i < message.transformationMatrix3D.size(); ++i) {
+        for (int i = 0; i < message.transformationMatrix3D.size(); ++i) {
             double[] newMatrix = message.transformationMatrix3D.get(i);
             doubleList.add(newMatrix);
         }
@@ -133,7 +138,7 @@ public class Host {
 
     private Message matricesIncoming(Message msg) throws Exception {
         String uuid = Support.getInstance().uuid;
-        if(!this.messageVault.containsKey(uuid)) {
+        if (!this.messageVault.containsKey(uuid)) {
             throw new Exception("Host has no location yet");
         }
         messageVault.put(msg.deviceIdentifier, msg);
@@ -143,14 +148,31 @@ public class Host {
         Message hostMsg = this.messageVault.get(uuid);
         List<double[]> hostCorners = convertMsg2DoubleArrays(hostMsg);
         double[] topLeftHostCorner = hostCorners.get(0);
+
+
+        List<double[]> clientCorners = convertMsg2DoubleArrays(msg);
+        double[] topLeftClientCorner = clientCorners.get(0);
+
+
+
         ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, matrices);
-        
 
-        //Support.getInstance().uuid
 
-        return new Message();
+        // TODO apply results from bounding box calculation
+        //double width = aobb.getMaxWidth();
+
+        SimpleMatrix hostMatrix = new SimpleMatrix(4, 4, true, topLeftHostCorner);
+        SimpleMatrix clientMatrix = new SimpleMatrix(4, 4, true, topLeftClientCorner);
+
+
+        SimpleMatrix t = getRelativeTransformation(hostMatrix, clientMatrix);
+        SimpleMatrix returnT = projectIntoXYPlane(t);
+
+        Message outMsg = new Message();
+        double[] matrixArray = Message.convertSimpleMatrixToArray(returnT);
+        outMsg.transformationMatrix2D.add(matrixArray);
+        return outMsg;
     }
-
 
     public void serve(int port) throws Exception {
         nano = new Nano(port);

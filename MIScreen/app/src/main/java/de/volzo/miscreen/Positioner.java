@@ -89,18 +89,14 @@ public class Positioner extends ARActivity {
         Message msg = new Message();
 
         for (SimpleMatrix m : matrices) {
-            SimpleMatrix reshapeM = m.copy();
-            reshapeM.reshape(1, 16);
-            double[] array = new double[16];
-            for (int i = 0; i < reshapeM.getNumElements(); ++i) {
-                array[i] =  reshapeM.get(0, i);
-            }
+            double[] array = Message.convertSimpleMatrixToArray(m);
             msg.transformationMatrix3D.add(array);
         }
         JSONObject json = msg.toJson();
 
         Client.getInstance().send(json);
     }
+
 
     public void receivedResponseFromHost(Message msg) {
         // msg should carry one 2D transformation matrix
