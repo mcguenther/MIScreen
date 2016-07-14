@@ -104,6 +104,16 @@ public class Host {
         return new ArrayList<>();
     }
 
+    private static List<double[]> convertMsg2DoubleArrays(Message message) {
+        ArrayList<double[]> doubleList = new ArrayList<double[]>();
+        for(int i = 0; i < message.transformationMatrix3D.size(); ++i) {
+            double[] newMatrix = message.transformationMatrix3D.get(i);
+            doubleList.add(newMatrix);
+        }
+
+        return doubleList;
+    }
+
     public static double[] floatArray2doubleArray(float[] clientFArray) {
         double[] resultArray = new double[clientFArray.length];
 
@@ -121,12 +131,22 @@ public class Host {
     }
 
 
-    private Message matricesIncoming(Message msg) {
+    private Message matricesIncoming(Message msg) throws Exception {
+        String uuid = Support.getInstance().uuid;
+        if(!this.messageVault.containsKey(uuid)) {
+            throw new Exception("Host has no location yet");
+        }
         messageVault.put(msg.deviceIdentifier, msg);
 
-        for (Map.Entry<String, Message> entry : messageVault.entrySet()) {
-            // TODO ...
-        }
+        List<double[]> matrices = convertMsgs2ListOfDoubles(this.messageVault.values());
+
+        Message hostMsg = this.messageVault.get(uuid);
+        List<double[]> hostCorners = convertMsg2DoubleArrays(hostMsg);
+        double[] topLeftHostCorner = hostCorners.get(0);
+        ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, matrices);
+        
+
+        //Support.getInstance().uuid
 
         return new Message();
     }
