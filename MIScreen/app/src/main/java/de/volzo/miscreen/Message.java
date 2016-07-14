@@ -22,6 +22,9 @@ public class Message {
     List<double[]> transformationMatrixImage;
 
     public Message() {
+        transformationMatrix2D = new ArrayList<>();
+        transformationMatrix3D = new ArrayList<>();
+        transformationMatrixImage = new ArrayList<>();
         this.deviceIdentifier = Support.getInstance().uuid;
     }
 

@@ -1,42 +1,50 @@
 package de.volzo.miscreen;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Handler;
-import android.os.Message;
+
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import de.volzo.miscreen.Message;
 
 import org.artoolkit.ar.base.ARActivity;
 import org.artoolkit.ar.base.ARToolKit;
 import org.artoolkit.ar.base.rendering.ARRenderer;
+import org.ejml.data.DenseMatrix64F;
 import org.ejml.simple.SimpleMatrix;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Positioner extends ARActivity {
     public static int MARKER_SIZE = 80;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 55;
-    private int markerID = -1;
+    //private int markerID = -1;
     private SimpleRenderer arRenderer;
     private TextView spRole;
     private int counter = 0;
     private final Map<String, List<SimpleMatrix>> DISPLAY_CORNERS = new HashMap<>();
-
 
     public Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             displayPosition();
         }
     };
+    private Timer timer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,16 +68,51 @@ public class Positioner extends ARActivity {
         Log.d(TAG, "Setting Camera preferences:");
 
         writePossibleDisplayCorners();
+
+        this.timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                try {
+                    sendTransMatrices();
+                } catch (Exception e) {
+                    Log.d(TAG, "Trying to send transformation matrices: " + e.getMessage());
+                }
+            }
+        }, 0, 2 * 1000);
+
     }
-    
+
     public void sendTransMatrices() throws Exception {
         List<SimpleMatrix> matrices = getDeviceCornersTransformationsFromMarker();
-        Client.getInstance();
-        // TODO send matrices
+        Message msg = new Message();
+
+        for (SimpleMatrix m : matrices) {
+            SimpleMatrix reshapeM = m.copy();
+            reshapeM.reshape(1, 16);
+            double[] array = new double[16];
+            for (int i = 0; i < reshapeM.getNumElements(); ++i) {
+                array[i] =  reshapeM.get(0, i);
+            }
+            msg.transformationMatrix3D.add(array);
+        }
+        JSONObject json = msg.toJson();
+
+        Client.getInstance().send(json);
     }
 
     public void receivedResponseFromHost(Message msg) {
-        // TODO
+        // msg should carry one 2D transformation matrix
+        double[] transM = msg.transformationMatrix2D.get(0);
+        SimpleMatrix transMM = new SimpleMatrix(3,3, true, transM);
+        String printM = transMM.toString();
+
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, printM, duration);
+        toast.show();
     }
 
     public List<SimpleMatrix> getDeviceCornersTransformationsFromMarker() throws Exception {
@@ -78,7 +121,7 @@ public class Positioner extends ARActivity {
         List<SimpleMatrix> fCameraToCorners = getDeviceCornersTransformationsFromCamera();
         List<SimpleMatrix> fMarkerToCorners = new ArrayList<>();
 
-        for(int i = 0; i < fCameraToCorners.size(); ++i) {
+        for (int i = 0; i < fCameraToCorners.size(); ++i) {
             SimpleMatrix fCameraToOneCorner = fCameraToCorners.get(i);
             SimpleMatrix fMarkerToOneCorner = fMarkerToCamera.mult(fCameraToOneCorner);
             fMarkerToCorners.add(fMarkerToOneCorner);
@@ -126,7 +169,7 @@ public class Positioner extends ARActivity {
             deviceName = "Nexus 5";
         }
         List<SimpleMatrix> corners = null;
-        if(this.DISPLAY_CORNERS.containsKey(deviceName)) {
+        if (this.DISPLAY_CORNERS.containsKey(deviceName)) {
             corners = this.DISPLAY_CORNERS.get(deviceName);
         }
         return corners;
@@ -146,6 +189,7 @@ public class Positioner extends ARActivity {
     }
 
     public float[] getTranformationMatrixMarkerToCamera() throws Exception {
+        int markerID = arRenderer.getMarkerID();
         if (markerID == -1) {
             throw new Exception("Marker not defined yet");
         }
@@ -161,7 +205,7 @@ public class Positioner extends ARActivity {
 
     public void displayPosition() {
         if (arRenderer != null) {
-            markerID = arRenderer.getMarkerID();
+            int markerID = arRenderer.getMarkerID();
             if (markerID > -1) {
                 float[] t = ARToolKit.getInstance().queryMarkerTransformation(markerID);
 
@@ -184,5 +228,10 @@ public class Positioner extends ARActivity {
                 }
             }
         }
+    }
+
+    protected void onDestroy () {
+        super.onDestroy();
+        this.timer.cancel();
     }
 }
