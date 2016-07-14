@@ -153,23 +153,16 @@ public class Host {
         Message hostMsg = this.messageVault.get(uuid);
         List<double[]> hostCorners = convertMsg2DoubleArrays(hostMsg);
         double[] topLeftHostCorner = hostCorners.get(0);
-
-
         List<double[]> clientCorners = convertMsg2DoubleArrays(msg);
         double[] topLeftClientCorner = clientCorners.get(0);
-
-
-
-        ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, matrices);
-
+        List<double[]> allCorners = convertMsgs2ListOfDoubles(this.messageVault.values());
 
         // TODO apply results from bounding box calculation
+        ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, allCorners);
         //double width = aobb.getMaxWidth();
 
         SimpleMatrix hostMatrix = new SimpleMatrix(4, 4, true, topLeftHostCorner);
         SimpleMatrix clientMatrix = new SimpleMatrix(4, 4, true, topLeftClientCorner);
-
-
         SimpleMatrix t = getRelativeTransformation(hostMatrix, clientMatrix);
         SimpleMatrix returnT = projectIntoXYPlane(t);
 
