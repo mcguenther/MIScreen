@@ -3,14 +3,18 @@ package de.volzo.miscreen;
 import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.os.Handler;
 import android.util.Log;
 
+import com.android.volley.Response;
+
 import org.json.JSONException;
 
 import org.ejml.simple.SimpleMatrix;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Map;
@@ -113,6 +117,15 @@ public class Host {
         return relativeT;
     }
 
+
+    private Message matricesIncoming(Message msg) {
+        // TODO
+
+        return new Message();
+    }
+
+
+
     public void serve(int port) throws Exception {
         nano = new Nano(port);
     }
@@ -126,17 +139,20 @@ public class Host {
         }
 
         public Response serve(IHTTPSession session) {
-            Map<String, String> parms = session.getParms();
-
-            String body = "narf";
             try {
-                body = (new Message()).toJson().toString();
-                System.out.println(body);
-            } catch (JSONException e) {
-                Log.e(TAG, "acquiring JSON failed: " + e.toString());
-            }
+                HashMap<String, String> request = new HashMap<String, String>();
+                session.parseBody(request);
 
-            return new Response(Response.Status.OK, "application/json", body);
+                Message payload = new Message(new JSONObject(request.get("postData")));
+
+                Message responseMessage = matricesIncoming(payload);
+
+                return new Response(Response.Status.OK, "application/json", responseMessage.toJson().toString());
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+                //return new Response(Response.Status.INTERNAL_ERROR);
+                return null;
+            }
         }
     }
 }

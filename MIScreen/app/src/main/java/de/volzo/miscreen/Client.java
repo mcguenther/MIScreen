@@ -59,9 +59,8 @@ public class Client {
         try {
 
             final String url = "http:/" + hostAddress.toString() + ":" + (hostPort+1);
-            final JSONObject jsonTestObject = new JSONObject("{\"type\":\"example\"}");
 
-            JsonObjectRequest request = new JsonObjectRequest(url, jsonTestObject, new Response.Listener<JSONObject>() {
+            JsonObjectRequest request = new JsonObjectRequest(url, (new Message()).toJson(), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.i(TAG, response.toString());

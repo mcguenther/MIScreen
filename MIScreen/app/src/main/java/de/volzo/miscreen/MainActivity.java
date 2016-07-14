@@ -22,7 +22,7 @@ Christophers Gebrauchsanleitung für Methodenaufrufe
 
 float[] matrix = {1, 2, 3}
 
-Message msg = new Message(this);
+Message msg = new Message();
 msg.transformationMatrix3D.add(matrix);
 msg.transformationMatrix2D.add(matrix);
 msg.transformationMatrixImage.add(matrix);
