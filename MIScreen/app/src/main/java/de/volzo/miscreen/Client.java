@@ -48,6 +48,7 @@ public class Client {
         }
     }
 
+
     public void manuallyInjectContext(Context context) {
         this.context = context;
     }

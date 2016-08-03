@@ -39,15 +39,6 @@
         android:enabled="true"
         android:text="ok" />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/spRole"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/btOk" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,6 +78,22 @@
         android:id="@+id/btServe"
         android:layout_above="@+id/btAdvertise"
         android:layout_toEndOf="@+id/btSendJson" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text=""
+        android:id="@+id/logView"
+        android:layout_above="@+id/btSendJson"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
 

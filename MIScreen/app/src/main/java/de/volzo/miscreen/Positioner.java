@@ -3,6 +3,7 @@ package de.volzo.miscreen;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Matrix;
 import android.os.Handler;
 
 import android.support.v4.app.ActivityCompat;
@@ -10,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,7 +64,6 @@ public class Positioner extends ARActivity {
                     new String[]{Manifest.permission.CAMERA},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         }
-        spRole = (TextView) findViewById(R.id.tvStatus);
         Client.getInstance().manuallyInjectPositioner(this);
 
         Log.d(TAG, "Setting Camera preferences:");
@@ -82,7 +83,20 @@ public class Positioner extends ARActivity {
             }
         }, 0, 10 * 1000);
 
+        drawImage();
     }
+
+    private void drawImage() {
+        ImageView imageView = (ImageView)findViewById(R.id.imageView2);
+
+        imageView.setImageResource(R.drawable.flunder_lowres);
+
+//        Matrix matrix = new Matrix();
+//        imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
+//        //matrix.postRotate( 180f, 1280, 720);
+//        imageView.setImageMatrix(matrix);
+    }
+
 
     public void sendTransMatrices() throws Exception {
         List<SimpleMatrix> matrices = getDeviceCornersTransformationsFromMarker();

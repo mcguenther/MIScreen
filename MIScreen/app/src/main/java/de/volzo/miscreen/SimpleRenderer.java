@@ -44,16 +44,8 @@ public class SimpleRenderer extends org.artoolkit.ar.base.rendering.ARRenderer {
      */
     @Override
     public void draw(GL10 gl) {
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        // Apply the ARToolKit projection matrix
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glLoadMatrixf(ARToolKit.getInstance().getProjectionMatrix(), 0);
-
         // If the marker is visible, apply its transformation, and draw a cube
         if (ARToolKit.getInstance().queryMarkerVisible(markerID)) {
-            gl.glMatrixMode(GL10.GL_MODELVIEW);
-            gl.glLoadMatrixf(ARToolKit.getInstance().queryMarkerTransformation(markerID), 0);
-            cube.draw(gl);
             mHandler.obtainMessage().sendToTarget();
         }
     }
