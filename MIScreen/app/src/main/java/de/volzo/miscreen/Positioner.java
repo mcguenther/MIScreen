@@ -83,18 +83,23 @@ public class Positioner extends ARActivity {
             }
         }, 0, 10 * 1000);
 
-        drawImage();
+        drawImage(null);
     }
 
-    private void drawImage() {
-        ImageView imageView = (ImageView)findViewById(R.id.imageView2);
+    private void drawImage(Matrix matrix) {
+        ImageView imageView = (ImageView) findViewById(R.id.imageView2);
 
         imageView.setImageResource(R.drawable.flunder_lowres);
+        imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
 
-//        Matrix matrix = new Matrix();
-//        imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
-//        //matrix.postRotate( 180f, 1280, 720);
-//        imageView.setImageMatrix(matrix);
+        if (matrix == null) {
+            matrix = new Matrix();
+            matrix.postRotate(45, 1280, 720);
+            matrix.postTranslate(200, 200);
+            matrix.postScale(0.5f, 0.5f);
+        }
+
+        imageView.setImageMatrix(matrix);
     }
 
 
