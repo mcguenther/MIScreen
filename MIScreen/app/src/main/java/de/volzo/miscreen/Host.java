@@ -136,14 +136,20 @@ public class Host {
 
     public static double[] floatArray2doubleArray(float[] clientFArray) {
         double[] resultArray = new double[clientFArray.length];
-
-
         for (int i = 0; i < clientFArray.length; i++) {
             resultArray[i] = clientFArray[i];
         }
-
         return resultArray;
     }
+
+    public static float[] doubleArray2floatArray(double[] clientFArray) {
+        float[] resultArray = new float[clientFArray.length];
+        for (int i = 0; i < clientFArray.length; i++) {
+            resultArray[i] = (float) clientFArray[i];
+        }
+        return resultArray;
+    }
+
 
     private static SimpleMatrix getRelativeTransformation(SimpleMatrix fromT, SimpleMatrix toT) {
         SimpleMatrix relativeT = fromT.mult(toT.invert());

@@ -128,6 +128,11 @@ public class Positioner extends ARActivity {
 
         Toast toast = Toast.makeText(context, printM, duration);
         toast.show();
+
+        float[] matrixData = Host.doubleArray2floatArray(transMM.getMatrix().getData());
+        Matrix graphicsMatrix = new Matrix();
+        graphicsMatrix.setValues(matrixData);
+        drawImage(graphicsMatrix);
     }
 
     public List<SimpleMatrix> getDeviceCornersTransformationsFromMarker() throws Exception {
