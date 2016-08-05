@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //            }
 //        }, 5000);
 
+
+        Support.getInstance().getDeviceCornersTransformations();
     }
 
     private void setCameraPreferences() {

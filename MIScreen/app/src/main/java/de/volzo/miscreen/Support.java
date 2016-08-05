@@ -1,5 +1,10 @@
 package de.volzo.miscreen;
 
+import android.util.Log;
+
+import org.ejml.simple.SimpleMatrix;
+
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,5 +26,16 @@ public class Support {
             support = new Support();
         }
         return support;
+    }
+
+    public List<SimpleMatrix> getDeviceCornersTransformations() {
+        Log.i(TAG, "device ID: " + android.os.Build.MODEL);
+
+        switch(android.os.Build.MODEL) {
+            case "XT1069":
+                break;
+        }
+
+        return null;
     }
 }
