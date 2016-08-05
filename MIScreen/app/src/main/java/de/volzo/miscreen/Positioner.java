@@ -87,7 +87,7 @@ public class Positioner extends ARActivity {
     }
 
     private void drawImage(Matrix matrix) {
-        ImageView imageView = (ImageView) findViewById(R.id.imageView2);
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
 
         imageView.setImageResource(R.drawable.flunder_lowres);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
@@ -100,6 +100,17 @@ public class Positioner extends ARActivity {
         }
 
         imageView.setImageMatrix(matrix);
+
+        float[] matrixValues = new float[9];
+        matrix.getValues(matrixValues);
+
+        String desc =   "Translate X: " + (int) matrixValues[Matrix.MTRANS_X] + "mm\n" +
+                        "Translate Y: " + (int) matrixValues[Matrix.MTRANS_Y] + "mm\n" +
+                        "Scale:       " + matrixValues[Matrix.MSCALE_X];
+
+        TextView tvMatrixInternals = (TextView) findViewById(R.id.tvMatrixInternals);
+        tvMatrixInternals.setText(desc);
+
     }
 
 
