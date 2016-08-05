@@ -68,8 +68,6 @@ public class Positioner extends ARActivity {
 
         Log.d(TAG, "Setting Camera preferences:");
 
-        writePossibleDisplayCorners();
-
         this.timer = new Timer();
         timer.schedule(new TimerTask() {
 
@@ -162,49 +160,8 @@ public class Positioner extends ARActivity {
         return fMarkerToCorners;
     }
 
-    private void writePossibleDisplayCorners() {
-        SimpleMatrix ulCorner = new SimpleMatrix(4, 4, true,
-                1, 0, 0, -10,
-                0, 1, 0, -50,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
-
-        SimpleMatrix urCorner = new SimpleMatrix(4, 4, true,
-                1, 0, 0, 50,
-                0, 1, 0, -5,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
-        SimpleMatrix llCorner = new SimpleMatrix(4, 4, true,
-                1, 0, 0, -10,
-                0, 1, 0, -80,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
-        SimpleMatrix lrCorner = new SimpleMatrix(4, 4, true,
-                1, 0, 0, 50,
-                0, 1, 0, -80,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
-
-        List<SimpleMatrix> corners = new ArrayList<>();
-        corners.add(ulCorner);
-        corners.add(urCorner);
-        corners.add(llCorner);
-        corners.add(lrCorner);
-        DISPLAY_CORNERS.put("Nexus 5", corners);
-    }
-
     private List<SimpleMatrix> getDeviceCornersTransformationsFromCamera() {
-        Boolean debug = true;
-
-        String deviceName = android.os.Build.MODEL;
-        if (debug) {
-            deviceName = "Nexus 5";
-        }
-        List<SimpleMatrix> corners = null;
-        if (this.DISPLAY_CORNERS.containsKey(deviceName)) {
-            corners = this.DISPLAY_CORNERS.get(deviceName);
-        }
-        return corners;
+        return Support.getInstance().getDeviceCornersTransformations();
     }
 
     // ARToolkit
