@@ -34,12 +34,11 @@ Client.getInstance().send(msg.toJson());
 
  */
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getName();
 
     private Spinner spRole;
-    private Button btOk;
 
     private boolean host = false;
 
@@ -54,14 +53,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         setContentView(R.layout.activity_main);
         spRole = (Spinner) findViewById(R.id.spRole);
-        btOk = (Button) findViewById(R.id.btOk);
 
         spRole.setOnItemSelectedListener(this);
-        btOk.setOnClickListener(this);
         setCameraPreferences();
 
         Client.getInstance().manuallyInjectContext(this);
         nsd = new NetworkServiceDiscovery(this);
+
+        Button btOk = (Button) findViewById(R.id.btOk);
+        final MainActivity mainActivity = this;
+        btOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int role = getRole();
+                Intent intent = new Intent(mainActivity, Positioner.class);
+                intent.putExtra("role", role);
+
+                stopNSD();
+
+                if (role == 1){ // client
+                    startAdvertising();
+                } else {
+                    startListening();
+                }
+
+                startActivity(intent);
+            }
+        });
 
         Button btAdvertise = (Button) findViewById(R.id.btAdvertise);
         btAdvertise.setOnClickListener(new View.OnClickListener() {
@@ -269,14 +287,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.wtf(TAG, "unimplemented role");
         }
         return pos;
-    }
-
-    @Override
-    public void onClick(View v) {
-        int role = getRole();
-        Intent intent = new Intent(this, Positioner.class);
-        intent.putExtra("role", role);
-        startActivity(intent);
     }
 
 //    private void updateView() {
