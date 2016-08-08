@@ -159,6 +159,8 @@ public class Host {
 
     private Message matricesIncoming(Message msg) throws Exception {
 
+        Log.i(TAG, "Host received matrix");
+
         messageVault.put(msg.deviceIdentifier, msg);
 
         String uuid = Support.getInstance().uuid;
@@ -211,7 +213,8 @@ public class Host {
 
                 return new Response(Response.Status.OK, "application/json", responseMessage.toJson().toString());
             } catch (Exception e) {
-                Log.e(TAG, e.toString());
+                Log.e(TAG, "HTTP serving failed: " + e.toString());
+                e.printStackTrace();
                 //return new Response(Response.Status.INTERNAL_ERROR);
                 return null;
             }

@@ -32,59 +32,59 @@ public class Support {
     public List<SimpleMatrix> getDeviceCornersTransformations() {
         Log.i(TAG, "device ID: " + android.os.Build.MODEL);
 
-        SimpleMatrix ulCorner = new SimpleMatrix(4, 4, true);
-        SimpleMatrix urCorner = new SimpleMatrix(4, 4, true);
-        SimpleMatrix llCorner = new SimpleMatrix(4, 4, true);
-        SimpleMatrix lrCorner = new SimpleMatrix(4, 4, true);
+        SimpleMatrix ulCorner = SimpleMatrix.identity(4);
+        SimpleMatrix urCorner = SimpleMatrix.identity(4);
+        SimpleMatrix llCorner = SimpleMatrix.identity(4);
+        SimpleMatrix lrCorner = SimpleMatrix.identity(4);
 
         switch(android.os.Build.MODEL) {
             case "XT1069": // Moto G2
 
-                ulCorner.set(3, 7,  50);
-                ulCorner.set(3, 7, -50);
+                ulCorner.set(3,  50);
+                ulCorner.set(7, -50);
 
-                urCorner.set(3, 7, -10);
-                urCorner.set(3, 7, -05);
+                urCorner.set(3, -10);
+                urCorner.set(7, -05);
 
-                llCorner.set(3, 7,  50);
-                llCorner.set(3, 7, -80);
+                llCorner.set(3, 50);
+                llCorner.set(7, -80);
 
-                lrCorner.set(3, 7, -10);
-                lrCorner.set(3, 7, -80);
+                lrCorner.set(3, -10);
+                lrCorner.set(7, -80);
 
                 break;
 
             case "NEXUS 5":
 
-                ulCorner.set(3, 7, -10);
-                ulCorner.set(3, 7, -50);
+                ulCorner.set(3, -10);
+                ulCorner.set(7, -50);
 
-                urCorner.set(3, 7,  50);
-                urCorner.set(3, 7, -05);
+                urCorner.set(3,  50);
+                urCorner.set(7, -05);
 
-                llCorner.set(3, 7, -10);
-                llCorner.set(3, 7, -80);
+                llCorner.set(3, -10);
+                llCorner.set(7, -80);
 
-                lrCorner.set(3, 7,  50);
-                lrCorner.set(3, 7, -80);
+                lrCorner.set(3,  50);
+                lrCorner.set(7, -80);
 
                 break;
 
-            case "XT1506": // Moto E2
+            case "MotoE2(4G-LTE)": // Moto E2
 
                 // TODO
 
-                ulCorner.set(3, 7, -10);
-                ulCorner.set(3, 7, -50);
+                ulCorner.set(3, -10);
+                ulCorner.set(7, -50);
 
-                urCorner.set(3, 7,  50);
-                urCorner.set(3, 7, -05);
+                urCorner.set(3,  50);
+                urCorner.set(7, -05);
 
-                llCorner.set(3, 7, -10);
-                llCorner.set(3, 7, -80);
+                llCorner.set(3, -10);
+                llCorner.set(7, -80);
 
-                lrCorner.set(3, 7,  50);
-                lrCorner.set(3, 7, -80);
+                lrCorner.set(3,  50);
+                lrCorner.set(7, -80);
 
                 break;
             default:

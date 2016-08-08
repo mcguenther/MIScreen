@@ -18,21 +18,6 @@ import android.widget.Spinner;
 import de.volzo.miscreen.arbitraryBoundingBox.ArbitrarilyOrientedBoundingBox;
 import de.volzo.miscreen.arbitraryBoundingBox.MIPoint2D;
 
-/*
-
-Christophers Gebrauchsanleitung für Methodenaufrufe
-
-float[] matrix = {1, 2, 3}
-
-Message msg = new Message();
-msg.transformationMatrix3D.add(matrix);
-msg.transformationMatrix2D.add(matrix);
-msg.transformationMatrixImage.add(matrix);
-
-Client.getInstance().send(msg.toJson());
-
-
- */
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -68,14 +53,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 int role = getRole();
                 Intent intent = new Intent(mainActivity, Positioner.class);
                 intent.putExtra("role", role);
-
-                stopNSD();
-
-                if (role == 1){ // client
-                    startAdvertising();
-                } else {
-                    startListening();
-                }
 
                 startActivity(intent);
             }
