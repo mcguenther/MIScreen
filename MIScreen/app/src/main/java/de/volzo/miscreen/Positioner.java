@@ -76,7 +76,8 @@ public class Positioner extends ARActivity {
                 try {
                     sendTransMatrices();
                 } catch (Exception e) {
-                    Log.d(TAG, "Trying to send transformation matrices: " + e.getMessage());
+                    Log.d(TAG, "Sending transformation matrices failed: " + e.toString());
+                    //e.printStackTrace();
                 }
             }
         }, 0, 10 * 1000);
