@@ -187,6 +187,7 @@ public class Host {
         Message outMsg = new Message();
         double[] matrixArray = Message.convertSimpleMatrixToArray(returnT);
         outMsg.transformationMatrix2D.add(matrixArray);
+        outMsg.transformationMatrixImage.add(SimpleMatrix.identity(3).getMatrix().data);
         return outMsg;
     }
 
