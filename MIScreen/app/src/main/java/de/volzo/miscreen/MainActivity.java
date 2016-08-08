@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 stopNSD();
 
-                if (role == 1){ // client
+                if (role == 0){ // client
                     startAdvertising();
                 } else {
                     startListening();
