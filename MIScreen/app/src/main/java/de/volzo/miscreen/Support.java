@@ -87,6 +87,25 @@ public class Support {
                 lrCorner.set(7, -80);
 
                 break;
+
+            case "ONEPLUS A3003":
+
+                // TODO
+
+                ulCorner.set(3, -10);
+                ulCorner.set(7, -50);
+
+                urCorner.set(3,  50);
+                urCorner.set(7, -05);
+
+                llCorner.set(3, -10);
+                llCorner.set(7, -95);
+
+                lrCorner.set(3,  50);
+                lrCorner.set(7, -95);
+
+                break;
+            
             default:
                 Log.wtf(TAG, "No Device ID found! \n When in doubt, run in circles, scream and shout!");
         }

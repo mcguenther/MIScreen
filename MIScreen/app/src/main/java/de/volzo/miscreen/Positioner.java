@@ -133,13 +133,16 @@ public class Positioner extends ARActivity {
         SimpleMatrix transMM = new SimpleMatrix(3,3, true, transM);
         String printM = transMM.toString();
 
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
+        SimpleMatrix imageT = new SimpleMatrix(3,3, true, msg.transformationMatrixImage.get(0));
+        SimpleMatrix combinedT = imageT.mult(transMM);
 
-        Toast toast = Toast.makeText(context, printM, duration);
-        toast.show();
+//        Context context = getApplicationContext();
+//        int duration = Toast.LENGTH_LONG;
+//
+//        Toast toast = Toast.makeText(context, printM, duration);
+//        toast.show();
 
-        float[] matrixData = Host.doubleArray2floatArray(transMM.getMatrix().getData());
+        float[] matrixData = Host.doubleArray2floatArray(combinedT.getMatrix().getData());
         Matrix graphicsMatrix = new Matrix();
         graphicsMatrix.setValues(matrixData);
         drawImage(graphicsMatrix);
