@@ -4,23 +4,21 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.os.Handler;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import de.volzo.miscreen.Message;
 
 import org.artoolkit.ar.base.ARActivity;
 import org.artoolkit.ar.base.ARToolKit;
 import org.artoolkit.ar.base.rendering.ARRenderer;
-import org.ejml.data.DenseMatrix64F;
 import org.ejml.simple.SimpleMatrix;
 import org.json.JSONObject;
 
@@ -80,38 +78,10 @@ public class Positioner extends ARActivity {
                     //e.printStackTrace();
                 }
             }
-        }, 0, 10 * 1000);
+        }, 0, 2000);
 
         drawImage(null);
     }
-
-    private void drawImage(Matrix matrix) {
-        ImageView imageView = (ImageView) findViewById(R.id.imageView);
-
-        imageView.setImageResource(R.drawable.flunder_lowres);
-        imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
-
-        if (matrix == null) {
-            matrix = new Matrix();
-            matrix.postRotate(45, 1280, 720);
-            matrix.postTranslate(200, 200);
-            matrix.postScale(0.5f, 0.5f);
-        }
-
-        imageView.setImageMatrix(matrix);
-
-        float[] matrixValues = new float[9];
-        matrix.getValues(matrixValues);
-
-        String desc =   "Translate X: " + (int) matrixValues[Matrix.MTRANS_X] + "mm\n" +
-                        "Translate Y: " + (int) matrixValues[Matrix.MTRANS_Y] + "mm\n" +
-                        "Scale:       " + matrixValues[Matrix.MSCALE_X];
-
-        TextView tvMatrixInternals = (TextView) findViewById(R.id.tvMatrixInternals);
-        tvMatrixInternals.setText(desc);
-
-    }
-
 
     public void sendTransMatrices() throws Exception {
         List<SimpleMatrix> matrices = getDeviceCornersTransformationsFromMarker();
@@ -226,5 +196,54 @@ public class Positioner extends ARActivity {
     protected void onDestroy () {
         super.onDestroy();
         this.timer.cancel();
+    }
+
+
+    private double calculatePixelSize() {
+        List<SimpleMatrix> corners = Support.getInstance().getDeviceCornersTransformations();
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int heightInPX = Math.max(size.x, size.y);
+
+        SimpleMatrix ulCorner = corners.get(0);
+        SimpleMatrix llCorner = corners.get(2);
+
+        // May need to remove * -1 in case display corner Coordinate System
+        // is changed
+
+        double heightInMM = (llCorner.get(7) - ulCorner.get(7)) * -1;
+
+        return heightInMM / heightInPX;
+    }
+
+    private void drawImage(Matrix matrix) {
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+
+        imageView.setImageResource(R.drawable.flunder_lowres);
+        imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
+
+        if (matrix == null) {
+            matrix = new Matrix();
+            matrix.postRotate(45, 1280, 720);
+            matrix.postTranslate(200, 200);
+            matrix.postScale(0.5f, 0.5f);
+        }
+
+        imageView.setImageMatrix(matrix);
+
+        float[] matrixValues = new float[9];
+        matrix.getValues(matrixValues);
+
+        String desc =   "Translate X: " + (int) matrixValues[Matrix.MTRANS_X] + "mm\n" +
+                "Translate Y: " + (int) matrixValues[Matrix.MTRANS_Y] + "mm\n" +
+                "Scale:       " + matrixValues[Matrix.MSCALE_X];
+
+        TextView tvMatrixInternals = (TextView) findViewById(R.id.tvMatrixInternals);
+        tvMatrixInternals.setText(desc);
+
+        Log.wtf(TAG, Double.toString(calculatePixelSize()));
+
     }
 }
