@@ -157,7 +157,7 @@ public class Positioner extends ARActivity {
 
         for (int i = 0; i < fCameraToCorners.size(); ++i) {
             SimpleMatrix fCameraToOneCorner = fCameraToCorners.get(i);
-            SimpleMatrix fMarkerToOneCorner = fMarkerToCamera.mult(fCameraToOneCorner);
+            SimpleMatrix fMarkerToOneCorner = fCameraToOneCorner.mult(fMarkerToCamera);
             fMarkerToCorners.add(fMarkerToOneCorner);
         }
 
