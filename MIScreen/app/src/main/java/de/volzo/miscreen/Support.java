@@ -40,6 +40,8 @@ public class Support {
         switch(android.os.Build.MODEL) {
             case "XT1069": // Moto G2
 
+                // TODO: still wrong
+
                 ulCorner.set(3,  50);
                 ulCorner.set(7, -50);
 
@@ -57,34 +59,32 @@ public class Support {
             case "NEXUS 5":
 
                 ulCorner.set(3, -10);
-                ulCorner.set(7, -50);
+                ulCorner.set(7,  05);
 
                 urCorner.set(3,  50);
-                urCorner.set(7, -05);
+                urCorner.set(7,  05);
 
                 llCorner.set(3, -10);
-                llCorner.set(7, -80);
+                llCorner.set(7,  80);
 
                 lrCorner.set(3,  50);
-                lrCorner.set(7, -80);
+                lrCorner.set(7,  80);
 
                 break;
 
             case "MotoE2(4G-LTE)": // Moto E2
 
-                // TODO
+                ulCorner.set(3, -50);
+                ulCorner.set(7,  10);
 
-                ulCorner.set(3, -10);
-                ulCorner.set(7, -50);
+                urCorner.set(3,  05);
+                urCorner.set(7,  10);
 
-                urCorner.set(3,  50);
-                urCorner.set(7, -05);
+                llCorner.set(3, -50);
+                llCorner.set(7,  80);
 
-                llCorner.set(3, -10);
-                llCorner.set(7, -80);
-
-                lrCorner.set(3,  50);
-                lrCorner.set(7, -80);
+                lrCorner.set(3,  05);
+                lrCorner.set(7,  80);
 
                 break;
 
@@ -92,17 +92,17 @@ public class Support {
 
                 // TODO
 
-                ulCorner.set(3, -10);
-                ulCorner.set(7, -50);
+                ulCorner.set(3, -15);
+                ulCorner.set(7,  10);
 
-                urCorner.set(3,  50);
-                urCorner.set(7, -05);
+                urCorner.set(3,  60);
+                urCorner.set(7,  10);
 
-                llCorner.set(3, -10);
-                llCorner.set(7, -95);
+                llCorner.set(3, -15);
+                llCorner.set(7,  95);
 
-                lrCorner.set(3,  50);
-                lrCorner.set(7, -95);
+                lrCorner.set(3,  60);
+                lrCorner.set(7,  95);
 
                 break;
             

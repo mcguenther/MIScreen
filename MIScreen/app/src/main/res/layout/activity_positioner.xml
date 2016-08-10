@@ -11,14 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="de.volzo.miscreen.Positioner"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_alignParentEnd="true">
     </FrameLayout>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView" />
+        android:scaleType="fitXY"
+        android:id="@+id/imageView"
+        android:alpha="0.9"/>
 
     <TextView
         android:layout_width="wrap_content"
