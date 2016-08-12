@@ -84,4 +84,11 @@ public class ArbitrarilyOrientedBoundingBox extends BoundingBox {
         return edges;
     }
 
+    @Override
+
+    public SimpleMatrix getCenter() {
+        SimpleMatrix centerPoint = super.getCenter();
+        SimpleMatrix rotatedCenterPoint = rotatePoints(centerPoint, this.getRot());
+        return rotatedCenterPoint;
+    }
 }

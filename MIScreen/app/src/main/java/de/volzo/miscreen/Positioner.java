@@ -78,7 +78,7 @@ public class Positioner extends ARActivity {
                     //e.printStackTrace();
                 }
             }
-        }, 0, 2000);
+        }, 0, 500);
 
         drawImage(null);
     }

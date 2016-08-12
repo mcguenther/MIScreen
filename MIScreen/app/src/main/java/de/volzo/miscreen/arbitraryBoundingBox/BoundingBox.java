@@ -49,16 +49,12 @@ public class BoundingBox {
 
     public BoundingBox(SimpleMatrix rotatedHull) {
         // assume that rotatedHull is 2xn, carrying n points
-
-
         SimpleMatrix xVals =  new SimpleMatrix(CommonOps.extractRow(rotatedHull.getMatrix(),0, null));
-
         this.minX = CommonOps.elementMin(xVals.getMatrix());
         this.maxX = CommonOps.elementMax(xVals.getMatrix());
         SimpleMatrix yVals = new SimpleMatrix(CommonOps.extractRow(rotatedHull.getMatrix(),1, null));
         this.minY = CommonOps.elementMin(yVals.getMatrix());
         this.maxY = CommonOps.elementMax(yVals.getMatrix());
-
     }
 
     public double getArea() {
@@ -84,11 +80,23 @@ public class BoundingBox {
         return rotatedPoints;
     }
 
-    public double getMaxWidth() {
+    public double getWidth() {
         int maxWidth = -1;
         double xWidth = Math.abs(this.getMaxX() - this.getMinX());
+
+        return xWidth;
+    }
+    public double getHeight() {
+        int maxHeight = -1;
         double yWidth = Math.abs(this.getMaxY() - this.getMinY());
 
-        return Math.max(xWidth,yWidth);
+        return yWidth;
+    }
+    
+    public SimpleMatrix getCenter() {
+        double meanX = (getMinX() + getMaxX()) / 2;
+        double meanY = (getMinY() + getMaxY()) / 2;
+        SimpleMatrix centerPoint = new SimpleMatrix(2, 1, true, meanX, meanY);
+        return centerPoint;
     }
 }
