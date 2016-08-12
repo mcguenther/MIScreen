@@ -56,7 +56,7 @@ public class Support {
 
                 break;
 
-            case "NEXUS 5":
+            case "Nexus 5":
 
                 ulCorner.set(3, -10);
                 ulCorner.set(7,  05);
