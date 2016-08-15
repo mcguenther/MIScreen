@@ -103,9 +103,12 @@ public class Positioner extends ARActivity {
         SimpleMatrix rotationMM = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(1));
         SimpleMatrix translationMM = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(2));
 
-        Log.d(TAG, "Received transformation matrix from host");
+        SimpleMatrix clientM = new SimpleMatrix(3, 3, true, msg.transformationMatrix2D.get(0));
 
         // TODO: Incoming matrices are relative to host, not Client!
+
+        translationMM.mult(clientM.invert());
+
 
         //SimpleMatrix imageT = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(0));
 
@@ -223,7 +226,7 @@ public class Positioner extends ARActivity {
     private void drawImage(Matrix scale, Matrix rotation, Matrix translation) {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
 
-        imageView.setImageResource(R.drawable.flunder_lowres);
+        imageView.setImageResource(R.drawable.hauptgebaeude_lowres);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
 
         Matrix matrix = new Matrix();
@@ -231,14 +234,16 @@ public class Positioner extends ARActivity {
         if (scale == null) {
             matrix = new Matrix();
         } else {
-            float[] matrixTranslation = new float[9];
-            translation.getValues(matrixTranslation);
-
             float[] matrixScale = new float[9];
             scale.getValues(matrixScale);
             float factor = (float) (1/(matrixScale[0] * calculatePixelSize()));
-            matrix.postScale(factor, factor);
-            matrix.postTranslate(matrixTranslation[Matrix.MTRANS_X], matrixTranslation[Matrix.MTRANS_Y]);
+            //matrix.postScale(factor, factor);
+            matrix.postScale(0.40f, 0.40f);
+
+            float[] matrixTranslation = new float[9];
+            translation.getValues(matrixTranslation);
+            matrix.postTranslate((float) (matrixTranslation[Matrix.MTRANS_X] / calculatePixelSize()),
+                                 (float) (matrixTranslation[Matrix.MTRANS_Y] / calculatePixelSize()));
         }
 
         imageView.setImageMatrix(matrix);
@@ -246,8 +251,8 @@ public class Positioner extends ARActivity {
         float[] matrixValues = new float[9];
         matrix.getValues(matrixValues);
 
-        String desc = "Translate X: " + (int) matrixValues[Matrix.MTRANS_X] + "mm\n" +
-                "Translate Y: " + (int) matrixValues[Matrix.MTRANS_Y] + "mm\n" +
+        String desc = "Translate X: " + (int) (matrixValues[Matrix.MTRANS_X]*calculatePixelSize()) + "mm\n" +
+                "Translate Y: " + (int) (matrixValues[Matrix.MTRANS_Y]*calculatePixelSize()) + "mm\n" +
                 "Scale:       " + matrixValues[Matrix.MSCALE_X];
 
         TextView tvMatrixInternals = (TextView) findViewById(R.id.tvMatrixInternals);

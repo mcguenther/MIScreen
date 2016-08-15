@@ -49,19 +49,17 @@ public class Support {
         switch(android.os.Build.MODEL) {
             case "XT1069": // Moto G2
 
-                // TODO: still wrong
+                ulCorner.set(3, -55);
+                ulCorner.set(7,   8);
 
-                ulCorner.set(3,  50);
-                ulCorner.set(7, -50);
+                urCorner.set(3,   8);
+                urCorner.set(7,   8);
 
-                urCorner.set(3, -10);
-                urCorner.set(7, -05);
+                llCorner.set(3, -55);
+                llCorner.set(7, 118);
 
-                llCorner.set(3, 50);
-                llCorner.set(7, -80);
-
-                lrCorner.set(3, -10);
-                lrCorner.set(7, -80);
+                lrCorner.set(3,   8);
+                lrCorner.set(7, 118);
 
                 break;
 
@@ -90,10 +88,10 @@ public class Support {
                 urCorner.set(7,   9);
 
                 llCorner.set(3, -50);
-                llCorner.set(7,  92);
+                llCorner.set(7, 108);
 
                 lrCorner.set(3,  07);
-                lrCorner.set(7,  92);
+                lrCorner.set(7, 108);
 
                 break;
 
