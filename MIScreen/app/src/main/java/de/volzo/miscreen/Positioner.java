@@ -100,12 +100,14 @@ public class Positioner extends ARActivity {
     public void receivedResponseFromHost(Message msg) {
         // msg should carry one 2D transformation matrix
         double[] transM = msg.transformationMatrix2D.get(0);
-        SimpleMatrix transMM = new SimpleMatrix(3,3, true, transM);
+        SimpleMatrix transMM = new SimpleMatrix(3, 3, true, transM);
         String printM = transMM.toString();
 
-        SimpleMatrix imageT = new SimpleMatrix(3,3, true, msg.transformationMatrixImage.get(0));
-        SimpleMatrix combinedT = imageT.mult(transMM);
+        SimpleMatrix imageT = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(0));
 
+
+        // SimpleMatrix combinedT = imageT.mult(transMM);
+        SimpleMatrix combinedT = imageT.mult(transMM.invert());
 //        Context context = getApplicationContext();
 //        int duration = Toast.LENGTH_LONG;
 //
@@ -193,7 +195,7 @@ public class Positioner extends ARActivity {
         }
     }
 
-    protected void onDestroy () {
+    protected void onDestroy() {
         super.onDestroy();
         this.timer.cancel();
     }
@@ -236,7 +238,7 @@ public class Positioner extends ARActivity {
         float[] matrixValues = new float[9];
         matrix.getValues(matrixValues);
 
-        String desc =   "Translate X: " + (int) matrixValues[Matrix.MTRANS_X] + "mm\n" +
+        String desc = "Translate X: " + (int) matrixValues[Matrix.MTRANS_X] + "mm\n" +
                 "Translate Y: " + (int) matrixValues[Matrix.MTRANS_Y] + "mm\n" +
                 "Scale:       " + matrixValues[Matrix.MSCALE_X];
 
