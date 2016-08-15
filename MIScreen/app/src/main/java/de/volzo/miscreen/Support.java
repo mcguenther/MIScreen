@@ -1,5 +1,6 @@
 package de.volzo.miscreen;
 
+import android.graphics.Matrix;
 import android.util.Log;
 
 import org.ejml.simple.SimpleMatrix;
@@ -27,6 +28,14 @@ public class Support {
             support = new Support();
         }
         return support;
+    }
+
+    public Matrix convertSimpleMatrixToGraphicsMatrix(SimpleMatrix sm) {
+        float[] matrixData = Host.doubleArray2floatArray(sm.getMatrix().getData());
+        Matrix graphicsMatrix = new Matrix();
+        graphicsMatrix.setValues(matrixData);
+
+        return graphicsMatrix;
     }
 
     public List<SimpleMatrix> getDeviceCornersTransformations() {
@@ -75,16 +84,16 @@ public class Support {
             case "MotoE2(4G-LTE)": // Moto E2
 
                 ulCorner.set(3, -50);
-                ulCorner.set(7,  10);
+                ulCorner.set(7,   9);
 
-                urCorner.set(3,  05);
-                urCorner.set(7,  10);
+                urCorner.set(3,  07);
+                urCorner.set(7,   9);
 
                 llCorner.set(3, -50);
-                llCorner.set(7,  80);
+                llCorner.set(7,  92);
 
-                lrCorner.set(3,  05);
-                lrCorner.set(7,  80);
+                lrCorner.set(3,  07);
+                lrCorner.set(7,  92);
 
                 break;
 

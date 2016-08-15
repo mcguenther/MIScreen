@@ -80,7 +80,7 @@ public class Positioner extends ARActivity {
             }
         }, 0, 500);
 
-        drawImage(null);
+        drawImage(null, null, null);
     }
 
     public void sendTransMatrices() throws Exception {
@@ -98,28 +98,26 @@ public class Positioner extends ARActivity {
 
 
     public void receivedResponseFromHost(Message msg) {
-        // msg should carry one 2D transformation matrix
-        double[] transM = msg.transformationMatrix2D.get(0);
-        SimpleMatrix transMM = new SimpleMatrix(3, 3, true, transM);
-        String printM = transMM.toString();
 
-        Log.d(TAG, "Received transformation matrix from host: " + printM);
+        SimpleMatrix scaleMM = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(0));
+        SimpleMatrix rotationMM = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(1));
+        SimpleMatrix translationMM = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(2));
 
-        SimpleMatrix imageT = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(0));
+        Log.d(TAG, "Received transformation matrix from host");
 
+        // TODO: Incoming matrices are relative to host, not Client!
 
-        // SimpleMatrix combinedT = imageT.mult(transMM);
-        SimpleMatrix combinedT = imageT.mult(transMM.invert());
-//        Context context = getApplicationContext();
-//        int duration = Toast.LENGTH_LONG;
-//
-//        Toast toast = Toast.makeText(context, printM, duration);
-//        toast.show();
+        //SimpleMatrix imageT = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(0));
 
-        float[] matrixData = Host.doubleArray2floatArray(combinedT.getMatrix().getData());
-        Matrix graphicsMatrix = new Matrix();
-        graphicsMatrix.setValues(matrixData);
-        drawImage(graphicsMatrix);
+        //SimpleMatrix combinedT = imageT.mult(transMM.invert());
+
+        Support s = Support.getInstance();
+
+        //translationMM = translationMM.divide(scaleMM.get(0) / calculatePixelSize());
+
+        drawImage(  s.convertSimpleMatrixToGraphicsMatrix(scaleMM),
+                    s.convertSimpleMatrixToGraphicsMatrix(rotationMM),
+                    s.convertSimpleMatrixToGraphicsMatrix(translationMM));
     }
 
     public List<SimpleMatrix> getDeviceCornersTransformationsFromMarker() throws Exception {
@@ -219,20 +217,29 @@ public class Positioner extends ARActivity {
 
         double heightInMM = (llCorner.get(7) - ulCorner.get(7)) * -1;
 
-        return heightInMM / heightInPX;
+        return Math.abs(heightInMM) / heightInPX;
     }
 
-    private void drawImage(Matrix matrix) {
+    private void drawImage(Matrix scale, Matrix rotation, Matrix translation) {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
 
         imageView.setImageResource(R.drawable.flunder_lowres);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
 
-        if (matrix == null) {
+        Matrix matrix = new Matrix();
+
+        if (scale == null) {
             matrix = new Matrix();
-            matrix.postRotate(45, 1280, 720);
-            matrix.postTranslate(200, 200);
-            matrix.postScale(0.5f, 0.5f);
+        } else {
+            float[] matrixTranslation = new float[9];
+            translation.getValues(matrixTranslation);
+
+            matrix.postTranslate(matrixTranslation[Matrix.MTRANS_X], matrixTranslation[Matrix.MTRANS_Y]);
+
+            float[] matrixScale = new float[9];
+            scale.getValues(matrixScale);
+            float factor = (float) (matrixScale[0] / calculatePixelSize());
+            matrix.preScale(0.3f, 0.3f);
         }
 
         imageView.setImageMatrix(matrix);
