@@ -2,6 +2,7 @@ package de.volzo.miscreen;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -57,6 +58,7 @@ public class Positioner extends ARActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_positioner);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 
         // check for camera permissions!!
