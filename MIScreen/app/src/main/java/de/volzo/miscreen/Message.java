@@ -84,7 +84,7 @@ public class Message {
         int noElems = reshapeM.getNumElements();
         reshapeM.reshape(1, noElems);
         double[] array = new double[noElems];
-        for (int i = 0; i < reshapeM.getNumElements(); ++i) {
+        for (int i = 0; i < noElems; ++i) {
             array[i] =  reshapeM.get(0, i);
         }
         return array;

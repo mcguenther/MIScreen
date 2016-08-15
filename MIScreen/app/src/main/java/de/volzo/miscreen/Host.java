@@ -162,23 +162,25 @@ public class Host {
             throw new Exception("Host has no location yet");
         }
         Message hostMsg = this.messageVault.get(uuid);
+
+        // get required corners
         List<double[]> hostCorners = convertMsg2DoubleArrays(hostMsg);
         double[] topLeftHostCorner = hostCorners.get(0);
         List<double[]> clientCorners = convertMsg2DoubleArrays(msg);
         double[] topLeftClientCorner = clientCorners.get(0);
         List<double[]> allCorners = convertMsgs2ListOfDoubles(this.messageVault.values());
 
-        // TODO apply results from bounding box calculation
-
-
+        // read image dimensions
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        //Returns null, sizes are in the options variable
-
         BitmapFactory.decodeFile("Data/flunder.jpg", options);
+
+        // get bounding box to compute image transformation
         ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, allCorners);
         SimpleMatrix imgTransformationHomo = calcImgTransformation(options, aobb);
 
+
+        // calc transformation matrix for current client
         SimpleMatrix hostMatrix = new SimpleMatrix(4, 4, true, topLeftHostCorner);
         SimpleMatrix clientMatrix = new SimpleMatrix(4, 4, true, topLeftClientCorner);
         SimpleMatrix hostToClientT = getRelativeTransformation(hostMatrix, clientMatrix);
