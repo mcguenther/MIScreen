@@ -99,17 +99,17 @@ public class Support {
 
                 // TODO
 
-                ulCorner.set(3, -15);
-                ulCorner.set(7,  10);
+                ulCorner.set(3, -13);
+                ulCorner.set(7,  9);
 
-                urCorner.set(3,  60);
-                urCorner.set(7,  10);
+                urCorner.set(3,  52);
+                urCorner.set(7,  9);
 
-                llCorner.set(3, -15);
-                llCorner.set(7,  95);
+                llCorner.set(3, -13);
+                llCorner.set(7,  130);
 
-                lrCorner.set(3,  60);
-                lrCorner.set(7,  95);
+                lrCorner.set(3,  52);
+                lrCorner.set(7,  130);
 
                 break;
             
