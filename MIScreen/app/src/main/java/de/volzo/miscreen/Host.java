@@ -210,13 +210,13 @@ public class Host {
 
         if (boxRatio >= 1 && imgRatio < 1 || boxRatio < 1 && imgRatio >= 1) {
             // From of box and image, one is in landscape, one is in portrait alignment;
-            // by rotating the image by 90° = PI/4 before fitting to AOBB,
+            // by rotating the image by 90° = PI/2 before fitting to AOBB,
             // the required scaling can kept to a minimum
             imgRatio = 1 / imgRatio;
             double buffer = imgHeight;
             imgHeight = imgWidth;
             imgWidth = buffer;
-            SimpleMatrix preRotationHomo = getRotatingHomography(Math.PI / 4);
+            SimpleMatrix preRotationHomo = getRotatingHomography(Math.PI / 2);
             // do pre-rotation before main rotation
             imgRotationHomo = imgRotationHomo.mult(preRotationHomo);
         }
