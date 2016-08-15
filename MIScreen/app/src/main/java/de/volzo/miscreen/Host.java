@@ -177,7 +177,7 @@ public class Host {
 
         // get bounding box to compute image transformation
         ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, allCorners);
-        SimpleMatrix imgTransformationHomo = calcImgTransformation(options, aobb);
+        List<SimpleMatrix> imgTransformationHomo = calcImgTransformation(options, aobb);
 
 
         // calc transformation matrix for current client
@@ -191,16 +191,17 @@ public class Host {
         double[] matrixHostToClient = Message.convertSimpleMatrixToArray(projectedHostToClientT);
         outMsg.transformationMatrix2D.add(matrixHostToClient);
 
-        double[] matrixImgT = Message.convertSimpleMatrixToArray(imgTransformationHomo);
-        outMsg.transformationMatrixImage.add(matrixImgT);
-
-
-        Log.d(TAG, "Sending Host->Image TransMat: " + imgTransformationHomo.toString());
+        for(int i=0; i<imgTransformationHomo.size(); ++i) {
+            double[] matrixImgT = Message.convertSimpleMatrixToArray(imgTransformationHomo.get(i));
+            outMsg.transformationMatrixImage.add(matrixImgT);
+            Log.d(TAG, "Sending Host->Image TransMat #" + i + ": " + imgTransformationHomo.toString());
+        }
+        
         Log.d(TAG, "Sending Host->Client TransMat: " + projectedHostToClientT.toString());
         return outMsg;
     }
 
-    private SimpleMatrix calcImgTransformation(BitmapFactory.Options imgOptions, ArbitrarilyOrientedBoundingBox aobb) {
+    private List<SimpleMatrix> calcImgTransformation(BitmapFactory.Options imgOptions, ArbitrarilyOrientedBoundingBox aobb) {
         double boxWidth = aobb.getWidth();
         double boxHeight = aobb.getHeight();
         double boxRot = aobb.getRot();
@@ -250,7 +251,13 @@ public class Host {
         //translation from image center to box center
         SimpleMatrix imgTranslHomo = getRelativeTransformation(imgCenter, boxCenter);
 
-        return imgTranslHomo.mult(imgRotationHomo.mult(imgScalingHomo));
+        List<SimpleMatrix> multOrderList = new ArrayList<>();
+        multOrderList.add(imgScalingHomo);
+        multOrderList.add(imgRotationHomo);
+        multOrderList.add(imgTranslHomo);
+
+        //return imgTranslHomo.mult(imgRotationHomo.mult(imgScalingHomo));
+        return multOrderList;
     }
 
     @NonNull
