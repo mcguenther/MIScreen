@@ -103,6 +103,8 @@ public class Positioner extends ARActivity {
         SimpleMatrix transMM = new SimpleMatrix(3, 3, true, transM);
         String printM = transMM.toString();
 
+        Log.d(TAG, "Received transformation matrix from host: " + printM);
+
         SimpleMatrix imageT = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(0));
 
 

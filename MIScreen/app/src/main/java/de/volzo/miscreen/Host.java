@@ -186,12 +186,17 @@ public class Host {
         SimpleMatrix hostToClientT = getRelativeTransformation(hostMatrix, clientMatrix);
         SimpleMatrix projectedHostToClientT = projectIntoXYPlane(hostToClientT);
 
+
         Message outMsg = new Message();
         double[] matrixHostToClient = Message.convertSimpleMatrixToArray(projectedHostToClientT);
         outMsg.transformationMatrix2D.add(matrixHostToClient);
 
         double[] matrixImgT = Message.convertSimpleMatrixToArray(imgTransformationHomo);
         outMsg.transformationMatrixImage.add(matrixImgT);
+
+
+        Log.d(TAG, "Sending Host->Image TransMat: " + imgTransformationHomo.toString());
+        Log.d(TAG, "Sending Host->Client TransMat: " + projectedHostToClientT.toString());
         return outMsg;
     }
 
