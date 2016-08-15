@@ -234,12 +234,11 @@ public class Positioner extends ARActivity {
             float[] matrixTranslation = new float[9];
             translation.getValues(matrixTranslation);
 
-            matrix.postTranslate(matrixTranslation[Matrix.MTRANS_X], matrixTranslation[Matrix.MTRANS_Y]);
-
             float[] matrixScale = new float[9];
             scale.getValues(matrixScale);
-            float factor = (float) (matrixScale[0] / calculatePixelSize());
-            matrix.preScale(0.3f, 0.3f);
+            float factor = (float) (1/(matrixScale[0] * calculatePixelSize()));
+            matrix.postScale(factor, factor);
+            matrix.postTranslate(matrixTranslation[Matrix.MTRANS_X], matrixTranslation[Matrix.MTRANS_Y]);
         }
 
         imageView.setImageMatrix(matrix);
