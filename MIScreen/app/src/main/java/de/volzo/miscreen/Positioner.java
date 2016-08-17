@@ -84,7 +84,7 @@ public class Positioner extends ARActivity {
                     sendTransMatrices();
                 } catch (Exception e) {
                     Log.d(TAG, "Sending transformation matrices failed: " + e.toString());
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }, 0, 500);
@@ -127,9 +127,7 @@ public class Positioner extends ARActivity {
 
         //translationMM = translationMM.divide(scaleMM.get(0) / calculatePixelSize());
 
-        drawImage(  s.convertSimpleMatrixToGraphicsMatrix(scaleMM),
-                    s.convertSimpleMatrixToGraphicsMatrix(rotationMM),
-                    s.convertSimpleMatrixToGraphicsMatrix(translationMM));
+        drawImage(scaleMM, rotationMM, translationMM);
     }
 
     public List<SimpleMatrix> getDeviceCornersTransformationsFromMarker() throws Exception {
@@ -232,7 +230,7 @@ public class Positioner extends ARActivity {
         return Math.abs(heightInMM) / heightInPX;
     }
 
-    private void drawImage(Matrix scale, Matrix rotation, Matrix translation) {
+    private void drawImage(SimpleMatrix scale, SimpleMatrix rotation, SimpleMatrix translation) {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
 
         imageView.setImageResource(R.drawable.hauptgebaeude_lowres);
@@ -240,19 +238,28 @@ public class Positioner extends ARActivity {
 
         Matrix matrix = new Matrix();
 
-        if (scale == null) {
-            matrix = new Matrix();
-        } else {
-            float[] matrixScale = new float[9];
-            scale.getValues(matrixScale);
-            float factor = (float) (1/(matrixScale[0] * calculatePixelSize()));
-            //matrix.postScale(factor, factor);
-            matrix.postScale(0.40f, 0.40f);
+        if (scale != null) {
+            double cosPhi = rotation.get(0, 0);
+            double radianPhi = Math.acos(cosPhi);
+            double degreePhi = radianPhi * (180 / Math.PI);
 
-            float[] matrixTranslation = new float[9];
-            translation.getValues(matrixTranslation);
-            matrix.postTranslate((float) (matrixTranslation[Matrix.MTRANS_X] / calculatePixelSize()),
-                                 (float) (matrixTranslation[Matrix.MTRANS_Y] / calculatePixelSize()));
+
+            float factor = (float) (1 / (scale.get(0, 0) * calculatePixelSize()));
+            matrix.postScale(factor, factor);
+
+            //ImageView im = (ImageView) this.findViewById(R.id.imageView);
+            //matrix.postRotate((float) degreePhi, im.getDrawable().getIntrinsicWidth()/2, im.getDrawable().getIntrinsicHeight()/2);
+            //matrix.postRotate((float)  degreePhi);
+
+            SimpleMatrix translationInPx = translation.divide(calculatePixelSize());
+            matrix.postTranslate((float) translationInPx.get(0, 2),
+                    (float) translationInPx.get(1, 2));
+
+
+
+
+
+
         }
 
         imageView.setImageMatrix(matrix);
@@ -260,9 +267,9 @@ public class Positioner extends ARActivity {
         float[] matrixValues = new float[9];
         matrix.getValues(matrixValues);
 
-        String desc = "Translate X: " + (int) (matrixValues[Matrix.MTRANS_X]*calculatePixelSize()) + "mm\n" +
-                "Translate Y: " + (int) (matrixValues[Matrix.MTRANS_Y]*calculatePixelSize()) + "mm\n" +
-                "Scale:       " + matrixValues[Matrix.MSCALE_X];
+        String desc = "Translate X: " + (int) (matrixValues[Matrix.MTRANS_X] * calculatePixelSize()) + "px\n" +
+                "Translate Y: " + (int) (matrixValues[Matrix.MTRANS_Y] * calculatePixelSize()) + "px\n" +
+                "Scale:       " + matrixValues[Matrix.MSCALE_X] / Math.cos(89 / (180/Math.PI)) + "image px / screen px";
 
         TextView tvMatrixInternals = (TextView) findViewById(R.id.tvMatrixInternals);
         tvMatrixInternals.setText(desc);

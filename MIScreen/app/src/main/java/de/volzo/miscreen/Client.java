@@ -83,6 +83,7 @@ public class Client {
                             positioner.receivedResponseFromHost(rtMsg);
                         } catch (org.json.JSONException e) {
                             Log.e(TAG, "Message could not be retrieved; received JSON: " + response.toString());
+                            e.printStackTrace();
                         }
                     } else {
                         Log.w(TAG, "no Positioner found for callback");
