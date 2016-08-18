@@ -173,7 +173,7 @@ public class Host {
         // read image dimensions
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile("Data/hauptgebaeude.jpg", options);
+        BitmapFactory.decodeFile("Data/hauptgebaeude_lowres_square.jpg", options);
 
         // get bounding box to compute image transformation
         ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, allCorners);
