@@ -28,7 +28,7 @@ public class Edge2D {
     }
 
     public double getAngle() {
-        return Math.atan(end.getY() - start.getY()) / (end.getX() - end.getY());
+        return Math.atan(end.getY() - start.getY()) / (end.getX() - start.getX());
     }
 
 }
