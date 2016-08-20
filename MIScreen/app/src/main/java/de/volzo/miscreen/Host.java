@@ -177,7 +177,7 @@ public class Host {
 
         // get bounding box to compute image transformation
         ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, allCorners);
-        List<SimpleMatrix> imgTransformationHomo = calcImgTransformation(options, aobb);
+        List<SimpleMatrix> imgTransformationHomos = calcImgTransformation(options, aobb);
 
 
         // calc transformation matrix for current client
@@ -191,10 +191,10 @@ public class Host {
         double[] matrixHostToClient = Message.convertSimpleMatrixToArray(projectedHostToClientT);
         outMsg.transformationMatrix2D.add(matrixHostToClient);
 
-        for(int i=0; i<imgTransformationHomo.size(); ++i) {
-            double[] matrixImgT = Message.convertSimpleMatrixToArray(imgTransformationHomo.get(i));
+        for(int i=0; i<imgTransformationHomos.size(); ++i) {
+            double[] matrixImgT = Message.convertSimpleMatrixToArray(imgTransformationHomos.get(i));
             outMsg.transformationMatrixImage.add(matrixImgT);
-            Log.d(TAG, "Sending Host->Image TransMat #" + i + ": " + imgTransformationHomo.toString());
+            Log.d(TAG, "Sending Host->Image TransMat #" + i + ": " + imgTransformationHomos.toString());
         }
         
         Log.d(TAG, "Sending Host->Client TransMat: " + projectedHostToClientT.toString());
@@ -210,14 +210,14 @@ public class Host {
         double imgWidth = (double) imgOptions.outWidth;
         double imgHeight = (double) imgOptions.outHeight;
 
-        double dpi;
+        double dpmm;
         double boxRatio = boxWidth / boxHeight;
         double imgRatio = imgWidth / imgHeight;
 
         if (boxRatio >= 1 && imgRatio < 1 || boxRatio < 1 && imgRatio >= 1) {
             // From of box and image, one is in landscape, one is in portrait alignment;
             // by rotating the image by 90° = PI/2 before fitting to AOBB,
-            // the required scaling can kept to a minimum
+            // the required scaling can be kept to a minimum
             imgRatio = 1 / imgRatio;
             double buffer = imgHeight;
             imgHeight = imgWidth;
@@ -228,18 +228,18 @@ public class Host {
         }
         if (imgRatio >= boxRatio) {
             // image is "wider" than box; scale by height
-            dpi = imgHeight / boxHeight;
+            dpmm = imgHeight / boxHeight;
         } else {
             // image is more "narrow" than box; scale by width
-            dpi = imgWidth / boxWidth;
+            dpmm = imgWidth / boxWidth;
         }
         SimpleMatrix imgScalingHomo = new SimpleMatrix(3, 3, true,
-                dpi, 0, 0,
-                0, dpi, 0,
+                dpmm, 0, 0,
+                0, dpmm, 0,
                 0, 0, 1);
         SimpleMatrix imgCenter = new SimpleMatrix(3, 3, true,
-                1, 0, (imgWidth / dpi) / 2,
-                0, 1, (imgHeight / dpi) / 2,
+                1, 0, (imgWidth / dpmm) / 2,
+                0, 1, (imgHeight / dpmm) / 2,
                 0, 0, 1);
 
         SimpleMatrix boxCenterPoint = aobb.getCenter();
@@ -254,6 +254,7 @@ public class Host {
         List<SimpleMatrix> multOrderList = new ArrayList<>();
         multOrderList.add(imgScalingHomo);
         multOrderList.add(imgRotationHomo);
+
         multOrderList.add(imgTranslHomo);
 
         //return imgTranslHomo.mult(imgRotationHomo.mult(imgScalingHomo));

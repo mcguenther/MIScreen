@@ -1,7 +1,6 @@
 package de.volzo.miscreen;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
@@ -89,7 +88,7 @@ public class Positioner extends ARActivity {
             }
         }, 0, 500);
 
-        drawImage(null, null, null);
+        drawImage(null, null, null, null);
     }
 
     public void sendTransMatrices() throws Exception {
@@ -127,7 +126,7 @@ public class Positioner extends ARActivity {
 
         //translationMM = translationMM.divide(scaleMM.get(0) / calculatePixelSize());
 
-        drawImage(scaleMM, rotationMM, translationMM);
+        drawImage(clientM, scaleMM, rotationMM, translationMM);
     }
 
     public List<SimpleMatrix> getDeviceCornersTransformationsFromMarker() throws Exception {
@@ -225,35 +224,49 @@ public class Positioner extends ARActivity {
         // May need to remove * -1 in case display corner Coordinate System
         // is changed
 
-        double heightInMM = (llCorner.get(7) - ulCorner.get(7)) * -1;
+        double heightInMM = llCorner.get(1,3) - ulCorner.get(1,3);
 
         return Math.abs(heightInMM) / heightInPX;
     }
 
-    private void drawImage(SimpleMatrix scale, SimpleMatrix rotation, SimpleMatrix translation) {
+    private void drawImage(SimpleMatrix clientM, SimpleMatrix scale, SimpleMatrix rotation, SimpleMatrix translation) {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
-
         imageView.setImageResource(R.drawable.hauptgebaeude_lowres);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
 
         Matrix matrix = new Matrix();
 
+
         if (scale != null) {
+
+            // set inverse client transformation matrix in order
+            // to get relative T:top left display corner to top left image corner
+            SimpleMatrix clientTBackwards = clientM.invert();
+            matrix.set(Support.getInstance().convertSimpleMatrixToGraphicsMatrix(clientTBackwards));
+
             double cosPhi = rotation.get(0, 0);
             double radianPhi = Math.acos(cosPhi);
             double degreePhi = radianPhi * (180 / Math.PI);
 
 
-            float factor = (float) (1 / (scale.get(0, 0) * calculatePixelSize()));
+            ImageView im = (ImageView) this.findViewById(R.id.imageView);
+            im.setPivotX(0.0f);
+            im.setPivotY(0.0f);
+
+            double pixelsize = calculatePixelSize();
+            double pxPerMmImage = scale.get(0, 0);
+            float factor = (float) (1 / (pxPerMmImage * pixelsize));
+            factor = 1f;
             matrix.postScale(factor, factor);
 
             //ImageView im = (ImageView) this.findViewById(R.id.imageView);
             //matrix.postRotate((float) degreePhi, im.getDrawable().getIntrinsicWidth()/2, im.getDrawable().getIntrinsicHeight()/2);
-            //matrix.postRotate((float)  degreePhi);
+            degreePhi = 0;
+            matrix.postRotate((float)  degreePhi);
 
             SimpleMatrix translationInPx = translation.divide(calculatePixelSize());
-            matrix.postTranslate((float) translationInPx.get(0, 2),
-                    (float) translationInPx.get(1, 2));
+            //matrix.postTranslate((float) translationInPx.get(0, 2),
+            //        (float) translationInPx.get(1, 2));
 
 
 
