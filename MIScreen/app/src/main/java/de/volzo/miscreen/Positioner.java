@@ -116,12 +116,6 @@ public class Positioner extends ARActivity {
         SimpleMatrix translationMM = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(2));
 
         SimpleMatrix clientM = new SimpleMatrix(3, 3, true, msg.transformationMatrix2D.get(0));
-
-        // TODO: Incoming matrices are relative to host, not Client!
-
-        translationMM.mult(clientM.invert());
-
-
         //SimpleMatrix imageT = new SimpleMatrix(3, 3, true, msg.transformationMatrixImage.get(0));
 
         //SimpleMatrix combinedT = imageT.mult(transMM.invert());
@@ -252,22 +246,18 @@ public class Positioner extends ARActivity {
             double radianPhi = Math.acos(cosPhi);
             double degreePhi = radianPhi * (180 / Math.PI);
 
-            //ImageView im = (ImageView) this.findViewById(R.id.imageView);
-            //im.setPivotX(0.0f);
-            //im.setPivotY(0.0f);
+
+            ImageView im = (ImageView) this.findViewById(R.id.imageView);
+            matrix.postRotate((float) degreePhi, im.getDrawable().getIntrinsicWidth()/2, im.getDrawable().getIntrinsicHeight()/2);
 
             double pixelsize = calculatePixelSize();
             double pxPerMmImage = scale.get(0, 0);
             float factor = (float) (1 / (pxPerMmImage * pixelsize));
-            factor = 1f;
 
             matrix.postScale(factor, factor);
             //Log.wtf(TAG, scale.get(0,0) + " PointsPerMM | " + Float.toString(factor));
 
-            //ImageView im = (ImageView) this.findViewById(R.id.imageView);
-            //matrix.postRotate((float) degreePhi, im.getDrawable().getIntrinsicWidth()/2, im.getDrawable().getIntrinsicHeight()/2);
-            //degreePhi = 0;
-            matrix.postRotate((float) degreePhi);
+
 
             SimpleMatrix translationInPx = translation.divide(calculatePixelSize());
 
