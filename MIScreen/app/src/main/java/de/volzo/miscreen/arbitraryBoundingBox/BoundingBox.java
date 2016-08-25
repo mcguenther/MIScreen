@@ -12,6 +12,8 @@ public class BoundingBox {
     protected double maxX;
     protected double maxY;
 
+
+
     public double getMinX() {
         return minX;
     }
@@ -55,6 +57,38 @@ public class BoundingBox {
         SimpleMatrix yVals = new SimpleMatrix(CommonOps.extractRow(rotatedHull.getMatrix(),1, null));
         this.minY = CommonOps.elementMin(yVals.getMatrix());
         this.maxY = CommonOps.elementMax(yVals.getMatrix());
+    }
+
+    public BoundingBox(MIPoint2D[] cornerArray) {
+        double minX = 0;
+        Boolean firstPoint = true;
+        double maxX = 0;
+        double minY = 0;
+        double maxY = 0;
+
+        for (int i=0;i<cornerArray.length;++i) {
+            MIPoint2D corner = cornerArray[i];
+            int cX = corner.getX();
+            int cY = corner.getY();
+            if(firstPoint || minX > cX) {
+                minX = cX;
+            }
+            if(firstPoint || maxX < cX) {
+                maxX = cX;
+            }
+            if(firstPoint || minY > cY) {
+                minY = cY;
+            }
+            if(firstPoint || maxY > cX) {
+                maxY = cY;
+            }
+
+            firstPoint = false;
+        }
+        this.minX = minX;
+        this.maxX = maxX;
+        this.minY = minY;
+        this.maxY = maxY;
     }
 
     public double getArea() {

@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Map;
 
+import de.volzo.miscreen.arbitraryBoundingBox.BoundingBox;
 import de.volzo.miscreen.arbitraryBoundingBox.MIPoint2D;
 import fi.iki.elonen.NanoHTTPD;
 
@@ -59,7 +60,7 @@ public class Host {
     // input: transformation matrices
     // matrices from ARToolkit are column-major (elements are listed column-wise)
     // --> use new SimpleMatrix(4, 4, false,  <<arToolkitArray>>);
-    private static ArbitrarilyOrientedBoundingBox getAOBB(double[] hostFArrayDouble, List<double[]> fList) {
+    private static BoundingBox getAOBB(double[] hostFArrayDouble, List<double[]> fList) {
         SimpleMatrix hostF = new SimpleMatrix(4, 4, true, hostFArrayDouble);
 
         SimpleMatrix originVector = new SimpleMatrix(3, 1, true, 0, 0, 1);
@@ -87,7 +88,7 @@ public class Host {
         }
 
         MIPoint2D[] cornerArray = cornerPoints.toArray(new MIPoint2D[cornerPoints.size()]);
-        ArbitrarilyOrientedBoundingBox aobb = new ArbitrarilyOrientedBoundingBox(cornerArray);
+        BoundingBox aobb = new BoundingBox(cornerArray);
 
         return aobb;
     }
@@ -176,8 +177,8 @@ public class Host {
         BitmapFactory.decodeFile("Data/hauptgebaeude_lowres_square.jpg", options);
 
         // get bounding box to compute image transformation
-        ArbitrarilyOrientedBoundingBox aobb = getAOBB(topLeftHostCorner, allCorners);
-        List<SimpleMatrix> imgTransformationHomos = calcImgTransformation(options, aobb);
+        BoundingBox aaBB = getAOBB(topLeftHostCorner, allCorners);
+        List<SimpleMatrix> imgTransformationHomos = calcImgTransformation(options, aaBB);
 
 
         // calc transformation matrix for current client
@@ -201,10 +202,10 @@ public class Host {
         return outMsg;
     }
 
-    private List<SimpleMatrix> calcImgTransformation(BitmapFactory.Options imgOptions, ArbitrarilyOrientedBoundingBox aobb) {
+    private List<SimpleMatrix> calcImgTransformation(BitmapFactory.Options imgOptions, BoundingBox aobb) {
         double boxWidth = aobb.getWidth();
         double boxHeight = aobb.getHeight();
-        double boxRot = aobb.getRot();
+        double boxRot = 0; //aobb.getRot();
         SimpleMatrix imgRotationHomo = getRotatingHomography(boxRot);
 
         double imgWidth = (double) imgOptions.outWidth;
