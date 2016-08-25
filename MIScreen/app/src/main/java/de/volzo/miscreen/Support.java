@@ -66,10 +66,10 @@ public class Support {
             case "Nexus 5":
 
                 ulCorner.set(3, -10);
-                ulCorner.set(7,  05);
+                ulCorner.set(7,   5);
 
                 urCorner.set(3,  50);
-                urCorner.set(7,  05);
+                urCorner.set(7,   5);
 
                 llCorner.set(3, -10);
                 llCorner.set(7,  80);
@@ -84,13 +84,13 @@ public class Support {
                 ulCorner.set(3, -50);
                 ulCorner.set(7,   9);
 
-                urCorner.set(3,  07);
+                urCorner.set(3,   7);
                 urCorner.set(7,   9);
 
                 llCorner.set(3, -50);
                 llCorner.set(7, 108);
 
-                lrCorner.set(3,  07);
+                lrCorner.set(3,   7);
                 lrCorner.set(7, 108);
 
                 break;
