@@ -65,17 +65,17 @@ public class Support {
 
             case "Nexus 5":
 
-                ulCorner.set(3, -10);
+                ulCorner.set(3,  -9);
                 ulCorner.set(7,   5);
 
-                urCorner.set(3,  50);
+                urCorner.set(3,  53);
                 urCorner.set(7,   5);
 
-                llCorner.set(3, -10);
-                llCorner.set(7,  80);
+                llCorner.set(3,  -9);
+                llCorner.set(7, 114);
 
-                lrCorner.set(3,  50);
-                lrCorner.set(7,  80);
+                lrCorner.set(3,  53);
+                lrCorner.set(7, 114);
 
                 break;
 
