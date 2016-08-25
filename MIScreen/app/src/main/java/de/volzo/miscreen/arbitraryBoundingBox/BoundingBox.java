@@ -79,7 +79,7 @@ public class BoundingBox {
             if(firstPoint || minY > cY) {
                 minY = cY;
             }
-            if(firstPoint || maxY > cX) {
+            if(firstPoint || maxY < cX) {
                 maxY = cY;
             }
 
