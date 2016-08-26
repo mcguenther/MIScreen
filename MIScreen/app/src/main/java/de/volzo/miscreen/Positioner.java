@@ -43,7 +43,7 @@ public class Positioner extends ARActivity {
 
     public Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            displayPosition();
+
         }
     };
     private Timer timer;
@@ -172,34 +172,14 @@ public class Positioner extends ARActivity {
             throw new MarkerException("Marker not visible in camera image");
         }
 
+        //Log.d(TAG, t.toString());
+        Log.d(TAG,
+                "X=" + String.valueOf(t[12]) + "; " +
+                        "Y=" + String.valueOf(t[13]) + "; " +
+                        "Z=" + String.valueOf(t[14])
+        );
+
         return t;
-    }
-
-    public void displayPosition() {
-        if (arRenderer != null) {
-            int markerID = arRenderer.getMarkerID();
-            if (markerID > -1) {
-                float[] t = ARToolKit.getInstance().queryMarkerTransformation(markerID);
-
-                if (t != null) {
-                    if (counter > 0) {
-                        float offsetX = t[12];
-                        float offsetY = t[13];
-                        float offsetZ = t[14];
-
-                        double dist = Math.sqrt(offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ);
-                        String text = "Distance: " + Double.toString(dist);
-
-                        spRole.setText(text);
-                        Log.d(TAG, Arrays.toString(t));
-                        Log.d(TAG, text + "(X:" + offsetX + " Y:" + offsetY + " Z:" + offsetZ + ")");
-                        counter = 0;
-                    } else {
-                        counter++;
-                    }
-                }
-            }
-        }
     }
 
     protected void onDestroy() {
@@ -248,7 +228,7 @@ public class Positioner extends ARActivity {
 
 
             ImageView im = (ImageView) this.findViewById(R.id.imageView);
-            matrix.postRotate((float) degreePhi, im.getDrawable().getIntrinsicWidth()/2, im.getDrawable().getIntrinsicHeight()/2);
+            matrix.postRotate((float) degreePhi, im.getDrawable().getIntrinsicWidth() / 2, im.getDrawable().getIntrinsicHeight() / 2);
 
             double pixelsize = calculatePixelSize();
             double pxPerMmImage = scale.get(0, 0);
@@ -256,7 +236,6 @@ public class Positioner extends ARActivity {
 
             matrix.postScale(factor, factor);
             //Log.wtf(TAG, scale.get(0,0) + " PointsPerMM | " + Float.toString(factor));
-
 
 
             SimpleMatrix translationInPx = translation.divide(calculatePixelSize());
